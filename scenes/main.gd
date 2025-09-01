@@ -9,7 +9,7 @@ var seed:int = Global.seed
 @export var max_zoom:float = 9999
 @export var min_zoom:float = 0
 
-@export var debug:bool = false
+@export var debug:bool = true
 
 var selected = Vector2i(-1,-1)
 
