@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=3 uid="uid://dpm6imyprut4p"]
+
+[ext_resource type="Script" uid="uid://thiil2gf74t6" path="res://scenes/building.gd" id="1_n8bkc"]
+
+[node name="Building" type="Area2D" groups=["Building"]]
+script = ExtResource("1_n8bkc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
+polygon = PackedVector2Array(0, -20, -32, 0, 0, 20, 32, 0)

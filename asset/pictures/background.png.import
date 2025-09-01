@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfhpj0hdmwy2u"
-path="res://.godot/imported/MouseLocation.png-32f4c6c70b7370c9fba028c8c0cff489.ctex"
+uid="uid://c48ab2gvetuh8"
+path="res://.godot/imported/background.png-65b3a2e3955102524d9798c6a7315e69.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/pictures/select/MouseLocation.png"
-dest_files=["res://.godot/imported/MouseLocation.png-32f4c6c70b7370c9fba028c8c0cff489.ctex"]
+source_file="res://asset/pictures/background.png"
+dest_files=["res://.godot/imported/background.png-65b3a2e3955102524d9798c6a7315e69.ctex"]
 
 [params]
 

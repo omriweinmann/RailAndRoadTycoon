@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfhpj0hdmwy2u"
-path="res://.godot/imported/MouseLocation.png-32f4c6c70b7370c9fba028c8c0cff489.ctex"
+uid="uid://jrohb4flof7s"
+path="res://.godot/imported/RoadOrientation3.png-ec9ddd2047ff514a63c7116dd3d4f7c2.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/pictures/select/MouseLocation.png"
-dest_files=["res://.godot/imported/MouseLocation.png-32f4c6c70b7370c9fba028c8c0cff489.ctex"]
+source_file="res://asset/pictures/buildings/RoadOrientation3.png"
+dest_files=["res://.godot/imported/RoadOrientation3.png-ec9ddd2047ff514a63c7116dd3d4f7c2.ctex"]
 
 [params]
 

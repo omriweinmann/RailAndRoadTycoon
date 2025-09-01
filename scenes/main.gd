@@ -11,6 +11,10 @@ var seed:int = Global.seed
 
 @export var debug:bool = false
 
+var selected = Vector2i(-1,-1)
+
+signal data_to_building(array_location)
+
 var speed = 150
 var zoom_speed = 0.05
 
@@ -20,6 +24,7 @@ var atlas_heightfloor:int = atlas_height - 1
 @export var texture_size_y = 40
 
 var load_label: PackedScene = load("res://scenes/label.tscn")
+var load_building: PackedScene = load("res://scenes/building.tscn")
 
 var random = RandomNumberGenerator.new()
 var cooldown = false
@@ -100,15 +105,48 @@ func _process(delta: float) -> void:
 		get_tree().change_scene_to_file("res://scenes/main.tscn")
 	#print(get_local_mouse_position())
 	var mouse_is_on_tile = $TileMapLayer.local_to_map(get_local_mouse_position())
-	print(mouse_is_on_tile)
+	#print(mouse_is_on_tile)
+	var offset = max(0,$TileMapLayer.get_cell_atlas_coords(mouse_is_on_tile)[1]-2)*2
+	var offset_s = max(0,$TileMapLayer.get_cell_atlas_coords(selected)[1]-2)*2
+	var miot_local = $TileMapLayer.map_to_local(mouse_is_on_tile)-Vector2(0,offset)
 	if mouse_is_on_tile.x < 0 or mouse_is_on_tile.x > width - 1 or mouse_is_on_tile.y < 0 or mouse_is_on_tile.y > (height - 1):
 		$MouseLocationLocal.visible = false
 	else:
 		$MouseLocationLocal.visible = true
-	var offset = max(0,$TileMapLayer.get_cell_atlas_coords(mouse_is_on_tile)[1]-2)*2
+	if Input.is_action_just_released("LeftClick"):
+		if $MouseLocationLocal.visible == true:
+			selected = Vector2i(mouse_is_on_tile)
+		else:
+			selected = Vector2i(-1, -1)
+		#print(Global.built.find(selected))
+		if _is_viable(mouse_is_on_tile):
+			var build_status = Global._build(selected, miot_local,0)
+			if build_status == -1:
+				_building(build_status, mouse_is_on_tile, miot_local)
+			else:
+				get_tree().call_group('Building','_give_data',build_status,mouse_is_on_tile,miot_local)
+		#print(Global.built)
+	#print(Global.built)
+	
+	#if not selected == Vector2i(-1, -1):
+		#$SelectLocation.position = $TileMapLayer.map_to_local(selected)-Vector2(0,offset_s)
+		#$SelectLocation.visible = true
+	#else:
+		#$SelectLocation.visible = false
 	#print(offset)
-	$MouseLocationLocal.position = $TileMapLayer.map_to_local(mouse_is_on_tile)-Vector2(0,offset)
+	#print(selected)
+	$MouseLocationLocal.position = miot_local
+func _is_viable(map_location):
+	if (map_location.x >= 0 or map_location.x <= width - 1 or map_location.y >= 0 or map_location.y <= (height - 1)) and $TileMapLayer.get_cell_atlas_coords(map_location).y > 1:
+		return true
+	else:
+		return false
 
+func _building(array_location, map_location, local):
+	var building = load_building.instantiate()
+	$Buildings.add_child(building)
+	get_tree().call_group('Building','_give_data',array_location,map_location,local)
 
 func _on_input_cooldown_timeout() -> void:
 	cooldown = false
+	

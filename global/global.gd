@@ -1,7 +1,47 @@
 extends Node
 
-var width:int = 25
-var height:int = 25
+var width:int = 125
+var height:int = 125
 var altitude:float = 0
 
 var seed:int = -1
+
+var built:Array = []
+var built_data:Array = []
+
+var building_source = [
+	[
+		"Road",
+		"res://asset/pictures/buildings/RoadOrientation",
+		".png",
+		1,
+		3,
+	]
+]
+
+func _build(coords:Vector2i,_coords_local,building_id):
+	var find = built.find(coords)
+	#print(find,",",coords)
+	var get_from_source = building_source[building_id]
+	if find == -1:
+		built.push_front(coords)
+		built_data.push_front(
+			[
+				get_from_source[0],
+				get_from_source[1] + str(get_from_source[3]) + get_from_source[2],
+				get_from_source[3]
+			]
+		)
+	else:
+		var new_orient = built_data[find][2]+1
+		if new_orient > get_from_source[4]:
+			new_orient = get_from_source[3]
+		built_data[find] = [
+			get_from_source[0],
+			get_from_source[1] + str(new_orient) + get_from_source[2],
+			new_orient
+		]
+		#print(built_data[find])
+	#print(get_from_source[3])
+	#print(built,built_data)
+	return find
