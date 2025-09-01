@@ -1,0 +1,57 @@
+[gd_scene load_steps=8 format=3 uid="uid://bifwadyel1jm5"]
+
+[ext_resource type="Script" uid="uid://dlmm6woeo80r0" path="res://scenes/main.gd" id="1_o5qli"]
+[ext_resource type="Texture2D" uid="uid://kaqia8qfql42" path="res://asset/pictures/terrain/TerrainAtlas8Template.png" id="2_0wfyh"]
+[ext_resource type="Texture2D" uid="uid://dr5nxcnlpryxk" path="res://icon.svg" id="2_jyhfs"]
+[ext_resource type="PackedScene" uid="uid://hosj01vbyfnt" path="res://scenes/mouse_location_local.tscn" id="3_sugp2"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0wfyh"]
+
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_sugp2"]
+texture = ExtResource("2_0wfyh")
+margins = Vector2i(0, 1)
+separation = Vector2i(0, 2)
+texture_region_size = Vector2i(64, 200)
+0:0/0 = 0
+0:1/0 = 0
+0:2/0 = 0
+0:3/0 = 0
+0:4/0 = 0
+0:5/0 = 0
+0:6/0 = 0
+0:7/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_0wfyh"]
+tile_shape = 1
+tile_layout = 4
+tile_size = Vector2i(64, 40)
+sources/1 = SubResource("TileSetAtlasSource_sugp2")
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_o5qli")
+max_zoom = 3.0
+min_zoom = 0.025
+
+[node name="BG" type="Sprite2D" parent="."]
+texture = ExtResource("2_jyhfs")
+
+[node name="Noise" type="Sprite2D" parent="."]
+visible = false
+texture = SubResource("NoiseTexture2D_0wfyh")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+zoom = Vector2(0.5, 0.5)
+
+[node name="TileMapLayer" type="TileMapLayer" parent="."]
+y_sort_enabled = true
+tile_set = SubResource("TileSet_0wfyh")
+
+[node name="GameTick" type="Timer" parent="."]
+wait_time = 0.05
+autostart = true
+
+[node name="Labels" type="Node2D" parent="."]
+
+[node name="MouseLocationLocal" parent="." instance=ExtResource("3_sugp2")]
+
+[connection signal="timeout" from="GameTick" to="." method="_on_input_cooldown_timeout"]
