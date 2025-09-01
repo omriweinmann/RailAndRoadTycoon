@@ -6,17 +6,22 @@ var altitude:float = Global.altitude
 
 var seed:int = Global.seed
 
-@export var max_zoom:float = 9999
+@export var max_zoom:float = 3
 @export var min_zoom:float = 0
 
-@export var debug:bool = true
+var debug:bool = Global.debug
+
 
 var selected = Vector2i(-1,-1)
+
+var pan_og_location = Vector2(-1,-1)
+var pan_new_location = Vector2(-1,-1)
 
 signal data_to_building(array_location)
 
 var speed = 150
-var zoom_speed = 0.05
+var zoom_speed = 0.2
+var zoom_dir = 0.0
 
 @export var atlas_height:int = 8
 var atlas_heightfloor:int = atlas_height - 1
@@ -31,7 +36,10 @@ var cooldown = false
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	var vp_size = get_viewport().get_visible_rect().size
 	$BG.position = Vector2(texture_size_x*width/2, 0)
+	var zoom_start = vp_size[0] / (width*texture_size_x)
+	$Camera2D.zoom = Vector2(zoom_start,zoom_start)
 	if seed == -1:
 		seed = random.randi()
 		#print(seed)
@@ -44,7 +52,6 @@ func _ready() -> void:
 	noise.height = height
 	noise.noise = fast_noise
 	$Noise.texture = noise
-	var vp_size = get_viewport().get_visible_rect().size
 	$Noise.position =  Vector2(vp_size[0]*0.5,vp_size[1]*0.5)
 	
 	await noise.changed
@@ -74,6 +81,15 @@ func _process(delta: float) -> void:
 	var cam_height = height * texture_size_y
 	var limit_top = cam_height / -2
 	var limit_bottom = cam_height / 2
+	if Input.is_action_just_released("CamZoomIn"):
+		zoom_dir += 1.0
+	if Input.is_action_just_released("CamZoomOut"):
+		zoom_dir -= 1.0
+	if Input.is_action_just_pressed("Pan"):
+		pan_og_location = get_local_mouse_position()
+	var pan_addition = Vector2(0,0)
+	if Input.is_action_pressed("Pan"):
+		pan_addition = (pan_og_location - get_global_mouse_position())
 	#print(vp_size[1],", ",$Camera2D.limit_bottom*min_zoom)
 	#print((width*texture_size_x)*$Camera2D.zoom[0], (height*texture_size_y)*$Camera2D.zoom[1])
 	#print(min_zoom,", ",max_zoom)
@@ -89,16 +105,21 @@ func _process(delta: float) -> void:
 	if cooldown == false:
 		cooldown = true
 		var direction = Input.get_vector("CamLeft", "CamRight", "CamUp", "CamDown")
-		var zoom_dir = Input.get_axis("CamZoomOut","CamZoomIn")
-		var pre_pos = $BG.position + (direction * speed / $Camera2D.zoom[0] / 2)
+		
+		#print(zoom_dir)
+		var pre_pos = $BG.position + (direction * speed / $Camera2D.zoom[0] / 2) + pan_addition
 		#print(limit_left,", ",limit_right,"/ ",limit_top,", ",limit_bottom)
 		var bg_pos_x = min(limit_right, max(limit_left, pre_pos[0]))
 		var bg_pos_y = min(limit_bottom, max(limit_top, pre_pos[1]))
-		$BG.position = Vector2(bg_pos_x, bg_pos_y)
-		$Camera2D.position = $BG.position
 		var zoom_amount = zoom_dir * zoom_speed * $Camera2D.zoom[0]
-		var zoom = $Camera2D.zoom + Vector2(zoom_amount,zoom_amount)
-		$Camera2D.zoom = Vector2(max(min_zoom+0.025,min(max_zoom,zoom.x)),max(min_zoom+0.025,min(max_zoom,zoom.y)))
+		zoom_dir = 0.0
+		var zoom = max(min_zoom+0.025,min(max_zoom,$Camera2D.zoom[0] + zoom_amount))
+		
+		var zoom_pos_change = ($BG.position - get_global_mouse_position()) * ($Camera2D.zoom[0]-zoom)/$Camera2D.zoom[0]
+		$Camera2D.zoom = Vector2(zoom,zoom)
+		#print(zoom_pos_change)
+		$BG.position = Vector2(bg_pos_x, bg_pos_y) + zoom_pos_change
+		$Camera2D.position = $BG.position
 		#print($Camera2D.zoom, max_zoom, min_zoom+0.025)
 		$BG.scale = Vector2((vp_size[0] / 128)/$Camera2D.zoom[0], (vp_size[1] / 128)/$Camera2D.zoom[0])
 	if Input.is_action_just_pressed("Restart"):

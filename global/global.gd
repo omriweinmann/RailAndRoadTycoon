@@ -1,7 +1,9 @@
 extends Node
 
-var width:int = 125
-var height:int = 125
+var debug = false
+
+var width:int = 250
+var height:int = 250
 var altitude:float = 0
 
 var seed:int = -1
