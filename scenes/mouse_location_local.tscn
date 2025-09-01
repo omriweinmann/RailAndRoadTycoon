@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://hosj01vbyfnt"]
 
-[ext_resource type="Texture2D" uid="uid://bfhpj0hdmwy2u" path="res://asset/pictures/Select/MouseLocation.png" id="1_h3n1v"]
+[ext_resource type="Texture2D" uid="uid://bfhpj0hdmwy2u" path="res://asset/pictures/select/MouseLocation.png" id="1_h3n1v"]
 
 [node name="MouseLocationLocal" type="Area2D"]
 

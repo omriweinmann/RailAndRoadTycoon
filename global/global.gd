@@ -45,3 +45,8 @@ func _build(coords:Vector2i,_coords_local,building_id):
 	#print(get_from_source[3])
 	#print(built,built_data)
 	return find
+	
+func _remove(array_location):
+	built.remove_at(array_location)
+	built_data.remove_at(array_location)
+	return true

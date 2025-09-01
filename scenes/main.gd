@@ -113,6 +113,7 @@ func _process(delta: float) -> void:
 		$MouseLocationLocal.visible = false
 	else:
 		$MouseLocationLocal.visible = true
+	var find = Global.built.find(mouse_is_on_tile)
 	if Input.is_action_just_released("LeftClick"):
 		if $MouseLocationLocal.visible == true:
 			selected = Vector2i(mouse_is_on_tile)
@@ -125,6 +126,16 @@ func _process(delta: float) -> void:
 				_building(build_status, mouse_is_on_tile, miot_local)
 			else:
 				get_tree().call_group('Building','_give_data',build_status,mouse_is_on_tile,miot_local)
+	if Input.is_action_just_released("RightClick"):
+		if $MouseLocationLocal.visible == true:
+			selected = Vector2i(mouse_is_on_tile)
+		else:
+			selected = Vector2i(-1, -1)
+		#print(Global.built.find(selected))
+		if not find == -1:
+			var remove_status = Global._remove(find)
+			if remove_status == true:
+				get_tree().call_group('Building','_destroy',mouse_is_on_tile)
 		#print(Global.built)
 	#print(Global.built)
 	

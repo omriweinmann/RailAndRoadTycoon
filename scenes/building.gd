@@ -10,3 +10,7 @@ func _give_data(array_location,map_location,local):
 		print(array_location,tilemap)
 		var info = Global.built_data[array_location]
 		$Sprite2D.texture = load(info[1])
+
+func _destroy(map_location):
+	if tilemap == Vector2i(-1,-1) or tilemap==map_location:
+		queue_free()
