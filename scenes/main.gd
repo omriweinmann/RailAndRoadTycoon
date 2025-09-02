@@ -11,6 +11,9 @@ var seed:int = Global.seed
 
 var debug:bool = Global.debug
 
+var mouse_good = load("res://asset/pictures/select/MouseLocation.png")
+var mouse_destroy = load("res://asset/pictures/select/Select1.png")
+var mouse_bad = load("res://asset/pictures/select/MouseLocationBad.png")
 
 var selected = Vector2i(-1,-1)
 
@@ -130,33 +133,34 @@ func _process(delta: float) -> void:
 	var offset = max(0,$TileMapLayer.get_cell_atlas_coords(mouse_is_on_tile)[1]-2)*2
 	var offset_s = max(0,$TileMapLayer.get_cell_atlas_coords(selected)[1]-2)*2
 	var miot_local = $TileMapLayer.map_to_local(mouse_is_on_tile)-Vector2(0,offset)
-	if mouse_is_on_tile.x < 0 or mouse_is_on_tile.x > width - 1 or mouse_is_on_tile.y < 0 or mouse_is_on_tile.y > (height - 1):
+	if mouse_is_on_tile.x < 0 or mouse_is_on_tile.x > width - 1 or mouse_is_on_tile.y < 0 or mouse_is_on_tile.y > (height - 1) or Global.building_id_selected == -1:
 		$MouseLocationLocal.visible = false
 	else:
 		$MouseLocationLocal.visible = true
+		if Global.building_id_selected == -2:
+			$MouseLocationLocal/Sprite2D.texture = mouse_destroy
+		else:
+			if _is_viable(mouse_is_on_tile):
+				$MouseLocationLocal/Sprite2D.texture = mouse_good
+			else:
+				$MouseLocationLocal/Sprite2D.texture = mouse_bad
 	var find = Global.built.find(mouse_is_on_tile)
-	if Input.is_action_just_released("LeftClick"):
+	if Input.is_action_just_released("LeftClick") and Global.mouse_in_menu == false:
 		if $MouseLocationLocal.visible == true:
 			selected = Vector2i(mouse_is_on_tile)
 		else:
 			selected = Vector2i(-1, -1)
 		#print(Global.built.find(selected))
 		if _is_viable(mouse_is_on_tile):
-			var build_status = Global._build(selected, miot_local,0)
+			var build_status = Global._build(selected, miot_local)
 			if build_status == -1:
 				_building(build_status, mouse_is_on_tile, miot_local)
+			elif build_status == -2:
+				get_tree().call_group('Building','_destroy',mouse_is_on_tile)
 			else:
 				get_tree().call_group('Building','_give_data',build_status,mouse_is_on_tile,miot_local)
-	if Input.is_action_just_released("RightClick"):
-		if $MouseLocationLocal.visible == true:
-			selected = Vector2i(mouse_is_on_tile)
-		else:
-			selected = Vector2i(-1, -1)
-		#print(Global.built.find(selected))
-		if not find == -1:
-			var remove_status = Global._remove(find)
-			if remove_status == true:
-				get_tree().call_group('Building','_destroy',mouse_is_on_tile)
+	if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
+		Global.building_id_selected = -1
 		#print(Global.built)
 	#print(Global.built)
 	

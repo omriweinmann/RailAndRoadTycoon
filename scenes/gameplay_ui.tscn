@@ -1,0 +1,46 @@
+[gd_scene load_steps=3 format=3 uid="uid://5o3c4rboe6om"]
+
+[ext_resource type="Theme" uid="uid://yraq1tvsgd0m" path="res://asset/theme/base_theme.tres" id="1_jpc7t"]
+[ext_resource type="Script" uid="uid://bnoky8m1vq1vg" path="res://scenes/gameplay_ui.gd" id="2_wf0n7"]
+
+[node name="GameplayUi" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme = ExtResource("1_jpc7t")
+script = ExtResource("2_wf0n7")
+
+[node name="Top" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -134.0
+offset_right = 135.0
+offset_bottom = 26.0
+grow_horizontal = 2
+
+[node name="Destroy" type="Button" parent="Top"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+toggle_mode = true
+text = "Destroy"
+
+[node name="MenuBar" type="MenuBar" parent="Top"]
+layout_mode = 2
+theme = ExtResource("1_jpc7t")
+
+[node name="Automobile" type="PopupMenu" parent="Top/MenuBar"]
+title = "Automobiles"
+theme = ExtResource("1_jpc7t")
+item_count = 1
+item_0/text = "Road"
+item_0/id = 0
+
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="toggled" from="Top/Destroy" to="." method="_on_destroy_toggled"]
+[connection signal="id_pressed" from="Top/MenuBar/Automobile" to="." method="_on_automobile_id_pressed"]
