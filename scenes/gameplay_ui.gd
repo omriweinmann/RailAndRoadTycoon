@@ -27,6 +27,6 @@ func _on_destroy_toggled(toggled_on: bool) -> void:
 	#print(toggled_on == true)
 	if toggled_on == true:
 		Global.building_id_selected = -2
-	else:
+	elif Global.building_id_selected == -2:
 		Global.building_id_selected = -1
 	#print(Global.building_id_selected)

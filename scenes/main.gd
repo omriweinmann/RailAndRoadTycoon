@@ -157,7 +157,7 @@ func _process(delta: float) -> void:
 				_building(build_status, mouse_is_on_tile, miot_local)
 			elif build_status == -2:
 				get_tree().call_group('Building','_destroy',mouse_is_on_tile)
-			else:
+			elif not build_status == -3:
 				get_tree().call_group('Building','_give_data',build_status,mouse_is_on_tile,miot_local)
 	if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
 		Global.building_id_selected = -1
