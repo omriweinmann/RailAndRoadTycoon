@@ -18,7 +18,8 @@ var mouse_bad = load("res://asset/pictures/select/MouseLocationBad.png")
 var selected = Vector2i(-1,-1)
 
 var pan_og_location = Vector2(-1,-1)
-var pan_new_location = Vector2(-1,-1)
+
+var plc_og_location = Vector2i(-1,-1)
 
 signal data_to_building(array_location)
 
@@ -145,20 +146,37 @@ func _process(delta: float) -> void:
 			else:
 				$MouseLocationLocal/Sprite2D.texture = mouse_bad
 	var find = Global.built.find(mouse_is_on_tile)
+	if Input.is_action_just_pressed("LeftClick") and Global.mouse_in_menu == false:
+		plc_og_location = mouse_is_on_tile
 	if Input.is_action_just_released("LeftClick") and Global.mouse_in_menu == false:
-		if $MouseLocationLocal.visible == true:
-			selected = Vector2i(mouse_is_on_tile)
-		else:
-			selected = Vector2i(-1, -1)
+		if Global.building_id_selected == 0:
+			var info_array = _drag_line_build(mouse_is_on_tile)
+			if info_array:
+				for x in abs(info_array[0]):
+					if info_array[1] == false:
+						x = -x
+					var offset_drag = Vector2i(0,x)
+					if info_array[2] == false:
+						offset_drag = Vector2i(x,0)
+					var new_miot = plc_og_location - offset_drag
+					var new_miot_local = $TileMapLayer.map_to_local(new_miot)
+					if _is_viable(new_miot):
+						var build_status = Global._build(new_miot, new_miot_local)
+						if build_status == -1:
+							_building(build_status, new_miot, new_miot_local)
+						elif build_status == -2:
+							get_tree().call_group('Building','_destroy',new_miot)
+						elif not build_status == -3:
+							get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+		if Global.building_id_selected == -2:
+			pass
+			#print(x)
+		#print(change)
+		#if $MouseLocationLocal.visible == true:
+			#selected = Vector2i(mouse_is_on_tile)
+		#else:
+			#selected = Vector2i(-1, -1)
 		#print(Global.built.find(selected))
-		if _is_viable(mouse_is_on_tile):
-			var build_status = Global._build(selected, miot_local)
-			if build_status == -1:
-				_building(build_status, mouse_is_on_tile, miot_local)
-			elif build_status == -2:
-				get_tree().call_group('Building','_destroy',mouse_is_on_tile)
-			elif not build_status == -3:
-				get_tree().call_group('Building','_give_data',build_status,mouse_is_on_tile,miot_local)
 	if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
 		Global.building_id_selected = -1
 		#print(Global.built)
@@ -171,7 +189,36 @@ func _process(delta: float) -> void:
 		#$SelectLocation.visible = false
 	#print(offset)
 	#print(selected)
-	$MouseLocationLocal.position = miot_local
+	for node in $NewMouses.get_children():
+		node.queue_free()
+	if not Input.is_action_pressed("LeftClick"):
+		$MouseLocationLocal.position = miot_local
+	else:
+		var info_array = _drag_line_build(mouse_is_on_tile)
+		if info_array:
+			for x in abs(info_array[0]):
+				if info_array[1] == false:
+					x = -x
+				var offset_drag = Vector2i(0,x)
+				if info_array[2] == false:
+					offset_drag = Vector2i(x,0)
+				var new_miot = plc_og_location - offset_drag
+				var new_miot_local = $TileMapLayer.map_to_local(new_miot)
+				if new_miot.x < 0 or new_miot.x > width - 1 or new_miot.y < 0 or new_miot.y > (height - 1) or Global.building_id_selected == -1:
+					$MouseLocationLocal.visible = false
+				else:
+					$MouseLocationLocal.visible = true
+					if Global.building_id_selected == -2:
+						$MouseLocationLocal/Sprite2D.texture = mouse_destroy
+					else:
+						if _is_viable(mouse_is_on_tile):
+							$MouseLocationLocal/Sprite2D.texture = mouse_good
+						else:
+							$MouseLocationLocal/Sprite2D.texture = mouse_bad
+				var new_mouse = $MouseLocationLocal.duplicate()
+				$NewMouses.add_child(new_mouse)
+				new_mouse.position = new_miot_local - Vector2(0,max(0,$TileMapLayer.get_cell_atlas_coords(new_miot)[1]-2)*2)
+		$MouseLocationLocal.visible = false
 func _is_viable(map_location):
 	if (map_location.x >= 0 or map_location.x <= width - 1 or map_location.y >= 0 or map_location.y <= (height - 1)) and $TileMapLayer.get_cell_atlas_coords(map_location).y > 1:
 		return true
@@ -185,4 +232,17 @@ func _building(array_location, map_location, local):
 
 func _on_input_cooldown_timeout() -> void:
 	cooldown = false
+	
+func _drag_line_build(mouse_is_on_tile):
+	if not plc_og_location == Vector2i(-1,-1):
+		var change = mouse_is_on_tile - plc_og_location
+		var var_to_use = change.y
+		var y_question = true
+		if abs(change.x) > abs(change.y):
+			var_to_use = change.x
+			y_question = false
+		var negative = true
+		if abs(var_to_use) == var_to_use:
+			negative = false
+		return [var_to_use,negative,y_question]
 	

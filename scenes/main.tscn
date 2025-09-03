@@ -56,6 +56,8 @@ y_sort_enabled = true
 
 [node name="Labels" type="Node2D" parent="."]
 
+[node name="NewMouses" type="Node2D" parent="."]
+
 [node name="MouseLocationLocal" type="Area2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="MouseLocationLocal"]
