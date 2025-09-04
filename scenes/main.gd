@@ -163,7 +163,7 @@ func _process(delta: float) -> void:
 					if info_array[2] == false:
 						offset_drag = Vector2i(x,0)
 					var new_miot = plc_og_location - offset_drag
-					var new_miot_local = $TileMapLayer.map_to_local(new_miot)
+					var new_miot_local = $TileMapLayer.map_to_local(new_miot) - Vector2(0,max(0,$TileMapLayer.get_cell_atlas_coords(new_miot)[1]-2)*2)
 					if _is_viable(new_miot):
 						var build_status = Global._build(new_miot, new_miot_local)
 						if build_status == -1:
@@ -205,6 +205,17 @@ func _process(delta: float) -> void:
 			#selected = Vector2i(mouse_is_on_tile)
 		#else:
 			#selected = Vector2i(-1, -1)
+		elif Global.building_id_selected == 1:
+			var new_miot = mouse_is_on_tile
+			var new_miot_local = miot_local
+			if _is_viable(new_miot):
+				var build_status = Global._build(new_miot, new_miot_local)
+				if build_status == -1:
+					_building(build_status, new_miot, new_miot_local)
+				elif build_status == -2:
+					get_tree().call_group('Building','_destroy',new_miot)
+				elif not build_status == -3:
+					get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
 		#print(Global.built.find(selected))
 	if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
 		Global.building_id_selected = -1
@@ -219,7 +230,7 @@ func _process(delta: float) -> void:
 	#print(offset)
 	#print(selected)
 	
-	if Global.mouse_in_menu == false and not Input.is_action_pressed("LeftClick"):
+	if Global.mouse_in_menu == false and (not Input.is_action_pressed("LeftClick") or Global.building_id_selected == 1):
 		$MouseLocationLocal.position = miot_local
 		for node in $NewMouses.get_children():
 			node.queue_free()

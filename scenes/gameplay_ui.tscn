@@ -40,7 +40,16 @@ item_count = 1
 item_0/text = "Road"
 item_0/id = 0
 
+[node name="Debug" type="PopupMenu" parent="Top/MenuBar"]
+auto_translate_mode = 1
+title = "Debug"
+theme = ExtResource("1_jpc7t")
+item_count = 1
+item_0/text = "Factory"
+item_0/id = 0
+
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
 [connection signal="toggled" from="Top/Destroy" to="." method="_on_destroy_toggled"]
 [connection signal="id_pressed" from="Top/MenuBar/Automobile" to="." method="_on_automobile_id_pressed"]
+[connection signal="id_pressed" from="Top/MenuBar/Debug" to="." method="_on_debug_id_pressed"]

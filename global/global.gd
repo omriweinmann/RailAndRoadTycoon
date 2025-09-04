@@ -20,6 +20,11 @@ var building_source = [
 		"Road",
 		"res://asset/pictures/buildings/RoadOrientation",
 		".png",
+	],
+	[
+		"Factory",
+		"res://asset/pictures/buildings/Factory",
+		".png",
 	]
 ]
 

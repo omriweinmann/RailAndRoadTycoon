@@ -15,6 +15,8 @@ func _give_data(array_location,map_location,local):
 		my_b_id = info[1]
 		if info[1] == 0:
 			get_tree().call_group("Building","_change_sprite",0)
+		if info[1] == 1:
+			$Sprite2D.texture = load(Global.building_source[1][1] + Global.building_source[1][2])
 func _destroy(map_location):
 	if tilemap==map_location:
 		if my_b_id == 0:
