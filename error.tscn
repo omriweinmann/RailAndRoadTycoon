@@ -73,6 +73,7 @@ vertical_alignment = 1
 autowrap_mode = 2
 
 [node name="Top" type="Panel" parent="TotalPanel"]
+layout_mode = 0
 offset_right = 278.0
 offset_bottom = 25.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_kyaun")

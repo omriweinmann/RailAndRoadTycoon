@@ -49,6 +49,10 @@ var viables = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	Global.built = []
+	Global.built_data = []
+	Global.error_pop_up = {"Title": "Nil", "Description": "Nil"}
+	Global.done_loading = false
 	rng.seed = seed
 	var vp_size = get_viewport().get_visible_rect().size
 	$BG.position = Vector2(texture_size_x*width/2, 0)
@@ -156,10 +160,8 @@ func _process(delta: float) -> void:
 			#$Camera2D.zoom = Vector2(max(min_zoom,min(max_zoom,zoom.x)),max(min_zoom,min(max_zoom,zoom.y)))
 		if cooldown == false:
 			cooldown = true
-			var direction = Input.get_vector("CamLeft", "CamRight", "CamUp", "CamDown")
-			
 			#print(zoom_dir)
-			var pre_pos = $BG.position + (direction * speed / $Camera2D.zoom[0] / 2) + pan_addition
+			var pre_pos = $BG.position + pan_addition
 			#print(limit_left,", ",limit_right,"/ ",limit_top,", ",limit_bottom)
 			var bg_pos_x = min(limit_right, max(limit_left, pre_pos[0]))
 			var bg_pos_y = min(limit_bottom, max(limit_top, pre_pos[1]))
@@ -265,6 +267,10 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
 			Global.building_id_selected = -1
 			#print(Global.built)
+		if Input.is_action_just_released("Q"):
+			Global.building_id_selected = -2
+		if Input.is_action_just_released("W"):
+			Global.building_id_selected = 0
 		#print(Global.built)
 
 		#if not selected == Vector2i(-1, -1):
