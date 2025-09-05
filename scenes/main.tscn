@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://bifwadyel1jm5"]
+[gd_scene load_steps=12 format=3 uid="uid://bifwadyel1jm5"]
 
 [ext_resource type="Script" uid="uid://dlmm6woeo80r0" path="res://scenes/main.gd" id="1_o5qli"]
 [ext_resource type="Texture2D" uid="uid://kaqia8qfql42" path="res://asset/pictures/terrain/TerrainAtlas8Template.png" id="2_0wfyh"]
@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://bcml6n62nwqbu" path="res://scenes/select_location.tscn" id="4_tbgi4"]
 [ext_resource type="Texture2D" uid="uid://bfhpj0hdmwy2u" path="res://asset/pictures/select/MouseLocation.png" id="4_tefeu"]
 [ext_resource type="PackedScene" uid="uid://5o3c4rboe6om" path="res://scenes/gameplay_ui.tscn" id="6_tefeu"]
+[ext_resource type="PackedScene" uid="uid://ce05n5mi7rapq" path="res://loading_screen.tscn" id="6_tipki"]
 [ext_resource type="PackedScene" uid="uid://c606ealjjpvxg" path="res://error.tscn" id="7_o6xl0"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_0wfyh"]
@@ -43,6 +44,7 @@ texture = SubResource("NoiseTexture2D_0wfyh")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 zoom = Vector2(0.5, 0.5)
+position_smoothing_speed = 10.0
 
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 y_sort_enabled = true
@@ -70,7 +72,12 @@ polygon = PackedVector2Array(0, -20, -32, 0, 0, 20, 32, 0)
 [node name="SelectLocation" parent="." instance=ExtResource("4_tbgi4")]
 visible = false
 
+[node name="LoadingScreen" type="CanvasLayer" parent="."]
+
+[node name="LoadingScreen" parent="LoadingScreen" instance=ExtResource("6_tipki")]
+
 [node name="UI" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="GameplayUi" parent="UI" instance=ExtResource("6_tefeu")]
 

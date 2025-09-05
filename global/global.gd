@@ -2,11 +2,13 @@ extends Node
 
 var debug = false
 
-var width:int = 375
-var height:int = 375
+var width:int = 125
+var height:int = 125
 var altitude:float = 0
 
-var industries_per_50 = 5
+var done_loading = false
+
+var industries_per_100 = 5
 
 var seed:int = -1
 
@@ -33,10 +35,17 @@ var building_source = [
 		".png",
 		false,
 		75,  
+	],
+	[
+		"Coal Mine",
+		"res://asset/pictures/buildings/CoalMine",
+		".png",
+		false,
+		50,  
 	]
 ]
 
-var proc_buildings = [1]
+var proc_buildings = [1,2]
 
 func _build(coords:Vector2i,_coords_local):
 	if not building_id_selected == -1:
