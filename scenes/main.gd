@@ -30,6 +30,8 @@ var zoom_dir = 0.0
 var drag_build_array = []
 var drag_build_array2 = []
 
+var rng = RandomNumberGenerator.new()
+
 @export var atlas_height:int = 8
 var atlas_heightfloor:int = atlas_height - 1
 @export var texture_size_x = 64
@@ -41,8 +43,11 @@ var load_building: PackedScene = load("res://scenes/building.tscn")
 var random = RandomNumberGenerator.new()
 var cooldown = false
 
+var viables = []
+
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	rng.seed = seed
 	var vp_size = get_viewport().get_visible_rect().size
 	$BG.position = Vector2(texture_size_x*width/2, 0)
 	var zoom_start = vp_size[0] / (width*texture_size_x)
@@ -80,7 +85,34 @@ func _ready() -> void:
 			
 			get_tree().call_group('Label','_make_label', Vector2i(x,y), $TileMapLayer.map_to_local(Vector2i(x,y)))
 			
-# Called every frame. 'delta' is the elapsed time since the previous frame.
+			if _is_viable(local):
+				viables.append(local)
+	var industries = int((width/50) * float(Global.industries_per_50))
+	for num in industries:
+		var ran_num = rng.randi_range(0,viables.size()-1)
+		var new_miot = viables[ran_num]
+		var new_miot_local = $TileMapLayer.map_to_local(new_miot) - Vector2(0,max(0,$TileMapLayer.get_cell_atlas_coords(new_miot)[1]-2)*2)
+		if _is_viable(new_miot) and viables.size() > 0:
+			Global.building_id_selected = Global.proc_buildings.pick_random()
+			var build_status = Global._build(new_miot, new_miot_local)
+			var sd = Global.building_source[Global.building_id_selected][4]
+			if not sd == 0:
+				for x in sd:
+					x -= int(sd/2)
+					for y in sd:
+						y -= int(sd/2)
+						var vec = new_miot+Vector2i(x,y)
+						var find_vec = viables.find(vec)
+						if not find_vec == -1:
+							viables.remove_at(find_vec)
+			if build_status == -1:
+				_building(build_status, new_miot, new_miot_local)
+			elif build_status == -2:
+				get_tree().call_group('Building','_destroy',new_miot)
+			elif not build_status == -3:
+				get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+	Global.building_id_selected = -1
+
 func _process(delta: float) -> void:
 	var vp_size = get_viewport().get_visible_rect().size
 	var limit_left = 0

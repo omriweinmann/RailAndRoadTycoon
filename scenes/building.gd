@@ -1,12 +1,12 @@
 extends Area2D
 
-var my_b_id
+var my_b_id = -1
 
 var tilemap = Vector2i(-1,-1)
 
 func _give_data(array_location,map_location,local):
 	array_location = max(array_location,0)
-	if tilemap == Vector2i(-1,-1) or tilemap==map_location:
+	if (tilemap == Vector2i(-1,-1) or tilemap==map_location) and (my_b_id == -1 or my_b_id == Global.building_id_selected):
 		position = local
 		tilemap = map_location
 		#print(array_location,tilemap)
@@ -18,7 +18,7 @@ func _give_data(array_location,map_location,local):
 		if info[1] == 1:
 			$Sprite2D.texture = load(Global.building_source[1][1] + Global.building_source[1][2])
 func _destroy(map_location):
-	if tilemap==map_location:
+	if tilemap==map_location and Global.building_source[my_b_id][3] == true:
 		if my_b_id == 0:
 			get_tree().call_group("Building","_change_sprite",0)
 		queue_free()

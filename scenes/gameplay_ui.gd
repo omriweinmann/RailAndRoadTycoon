@@ -15,6 +15,14 @@ func _process(delta: float) -> void:
 		$Top/Destroy.button_pressed = false
 	#pass
 
+func _on_automobile_id_pressed(id: int) -> void:
+	var text = $Top/MenuBar/Automobile.get_item_text(id)
+	for building_source in Global.building_source:
+		if building_source[0] == text:
+			Global.building_id_selected = Global.building_source.find(building_source)
+			print(Global.building_id_selected)
+			break
+
 func _on_debug_id_pressed(id: int) -> void:
 	var text = $Top/MenuBar/Debug.get_item_text(id)
 	for building_source in Global.building_source:
