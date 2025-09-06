@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ftnwxadkidge"
-path="res://.godot/imported/RoadOrientation0100.png-cf2cedc9fe178f58b5d73c6a13d3fc87.ctex"
+uid="uid://cn67gsiys8tsp"
+path="res://.godot/imported/RoadOrientation0001.png-142079cf051f94ef35ca78750c3e5f89.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://asset/pictures/buildings/RoadOrientation0100.png"
-dest_files=["res://.godot/imported/RoadOrientation0100.png-cf2cedc9fe178f58b5d73c6a13d3fc87.ctex"]
+source_file="res://asset/pictures/buildings/roads/RoadOrientation0001.png"
+dest_files=["res://.godot/imported/RoadOrientation0001.png-142079cf051f94ef35ca78750c3e5f89.ctex"]
 
 [params]
 

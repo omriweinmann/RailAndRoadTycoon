@@ -24,7 +24,7 @@ var building_id_selected = -1
 var building_source = [
 	[
 		"Road", # Real Name
-		"res://asset/pictures/buildings/RoadOrientation", # File Location
+		"res://asset/pictures/buildings/roads/RoadOrientation", # File Location
 		".png", # File Format
 		true, # Removable
 		[], # Procedu-Generated (Check Power Plant for true)
@@ -36,8 +36,14 @@ var building_source = [
 		false,
 		[ # True P-G
 			50, # Social Distancing - New industries can not be place with in _ of this industry
-			[0,0], # Extra (places more industies of the same type around
-			[], # Sprites For Extra
+			[8,2], # Extra (places more industies of the same type around) (How many, How far)
+			[
+				"res://asset/pictures/buildings/PowerPlant0.png",
+				"res://asset/pictures/buildings/PowerPlant1.png",
+				"res://asset/pictures/buildings/PowerPlant2.png",
+				"res://asset/pictures/buildings/PowerPlant3.png",
+				"res://asset/pictures/buildings/PowerPlant4.png",
+			], # Sprites For Extra
 			false, # Pollutes
 			-1, #Connects to, (what industry to auto gen next)
 		],
