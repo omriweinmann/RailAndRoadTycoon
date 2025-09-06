@@ -4,7 +4,7 @@ var my_b_id = -1
 
 var tilemap = Vector2i(-1,-1)
 
-func _give_data(array_location,map_location,local):
+func _give_data(array_location,map_location,local,sprite_override):
 	array_location = max(array_location,0)
 	if (tilemap == Vector2i(-1,-1) or tilemap==map_location) and (my_b_id == -1 or my_b_id == Global.building_id_selected):
 		position = local
@@ -13,10 +13,15 @@ func _give_data(array_location,map_location,local):
 		var info = Global.built_data[array_location]
 		var string_nums = ""
 		my_b_id = info[1]
-		if info[1] == 0:
-			get_tree().call_group("Building","_change_sprite",0)
-		if info[1] == 1 or info[1] == 2:
-			$Sprite2D.texture = load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+		#print(sprite_override,",",sprite_override == "null")
+		if sprite_override == "null":
+			if info[1] == 0:
+				get_tree().call_group("Building","_change_sprite",0)
+			if info[1] == 1 or info[1] == 2:
+				#print(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+				$Sprite2D.texture = load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+		else:
+			$Sprite2D.texture = load(sprite_override)
 func _destroy(map_location):
 	if tilemap==map_location and Global.building_source[my_b_id][3] == true:
 		if my_b_id == 0:

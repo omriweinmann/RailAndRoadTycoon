@@ -95,6 +95,7 @@ func _ready() -> void:
 				viables.append(local)
 	var industries = int((width/100) * float(Global.industries_per_100))
 	if viables.size() > 0:
+		var overriden = false
 		for num in industries:
 			await get_tree().create_timer(0.01, true, true).timeout
 			var ran_num = rng.randi_range(0,viables.size()-1)
@@ -104,24 +105,55 @@ func _ready() -> void:
 			var new_miot = viables[ran_num]
 			var new_miot_local = $TileMapLayer.map_to_local(new_miot) - Vector2(0,max(0,$TileMapLayer.get_cell_atlas_coords(new_miot)[1]-2)*2)
 			if _is_viable(new_miot) and viables.size() > 0:
-				Global.building_id_selected = Global.proc_buildings.pick_random()
+				if overriden == false:
+					Global.building_id_selected = Global.proc_buildings.pick_random()
+				overriden = false
 				var build_status = Global._build(new_miot, new_miot_local)
-				var sd = Global.building_source[Global.building_id_selected][4]
-				if not sd == 0:
-					for x in sd:
-						x -= int(sd/2)
-						for y in sd:
-							y -= int(sd/2)
-							var vec = new_miot+Vector2i(x,y)
-							var find_vec = viables.find(vec)
-							if not find_vec == -1:
-								viables.remove_at(find_vec)
+				var is_industry = Global.building_source[Global.building_id_selected][4]
+				if not is_industry == []:
+					var sd = is_industry[0]
+					if not sd == 0:
+						for x in sd:
+							x -= int(sd/2)
+							for y in sd:
+								y -= int(sd/2)
+								var vec = new_miot+Vector2i(x,y)
+								var find_vec = viables.find(vec)
+								if not find_vec == -1:
+									viables.remove_at(find_vec)
+					var ex = is_industry[1]
+					if not ex == []:
+						for x in ex[0]:
+							var ran_sprite = is_industry[2].pick_random()
+							#print(ran_sprite)
+							var ran_x = rng.randi_range(-ex[1],ex[1])
+							var ran_y = rng.randi_range(-ex[1],ex[1])
+							var miot_ex = new_miot+Vector2i(ran_x,ran_y)
+							var miot_local_ex = $TileMapLayer.map_to_local(miot_ex) - Vector2(0,max(0,$TileMapLayer.get_cell_atlas_coords(miot_ex)[1]-2)*2)
+							var build_status_ex = Global._build(miot_ex, miot_local_ex)
+							if build_status_ex == -1 and _is_viable(miot_ex):
+								_building(build_status_ex, miot_ex, miot_local_ex, ran_sprite)
+					var pollute = is_industry[3]
+					if pollute:
+						for x in 7:
+							x -= 3
+							for y in 7:
+								y -= 3
+								var vec = new_miot+Vector2i(x,y)
+								var ran_check = rng.randi_range(0,2*(abs(x)))
+								#print(ran_check)
+								if not (vec.x < 0 or vec.x > width - 1 or vec.y < 0 or vec.y > (height - 1)) and ran_check  == 1:
+									$TileMapLayer.set_cell(vec,2,$TileMapLayer.get_cell_atlas_coords(vec))
+					var leads_to = is_industry[4]
+					if not leads_to == -1:
+						overriden = true
+						Global.building_id_selected = leads_to
 				if build_status == -1:
-					_building(build_status, new_miot, new_miot_local)
+					_building(build_status, new_miot, new_miot_local, "null")
 				elif build_status == -2:
 					get_tree().call_group('Building','_destroy',new_miot)
 				elif not build_status == -3:
-					get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+					get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local,"null")
 			elif not viables.size() > 0:
 				break
 	Global.building_id_selected = -1
@@ -214,11 +246,11 @@ func _process(delta: float) -> void:
 						if _is_viable(new_miot):
 							var build_status = Global._build(new_miot, new_miot_local)
 							if build_status == -1:
-								_building(build_status, new_miot, new_miot_local)
+								_building(build_status, new_miot, new_miot_local,"null")
 							elif build_status == -2:
 								get_tree().call_group('Building','_destroy',new_miot)
 							elif not build_status == -3:
-								get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+								get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local,"null")
 			elif Global.building_id_selected == -2:
 				var change = mouse_is_on_tile - plc_og_location
 				var x_neg = false
@@ -241,28 +273,28 @@ func _process(delta: float) -> void:
 						if _is_viable(new_miot):
 							var build_status = Global._build(new_miot, new_miot_local)
 							if build_status == -1:
-								_building(build_status, new_miot, new_miot_local)
+								_building(build_status, new_miot, new_miot_local,"null")
 							elif build_status == -2:
 								get_tree().call_group('Building','_destroy',new_miot)
 							elif not build_status == -3:
-								get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+								get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local,"null")
 				#print(x)
 			#print(change)
 			#if $MouseLocationLocal.visible == true:
 				#selected = Vector2i(mouse_is_on_tile)
 			#else:
 				#selected = Vector2i(-1, -1)
-			elif Global.building_id_selected == 1:
+			elif Global.building_id_selected == 1 or Global.building_id_selected == 2:
 				var new_miot = mouse_is_on_tile
 				var new_miot_local = miot_local
 				if _is_viable(new_miot):
 					var build_status = Global._build(new_miot, new_miot_local)
 					if build_status == -1:
-						_building(build_status, new_miot, new_miot_local)
+						_building(build_status, new_miot, new_miot_local,"null")
 					elif build_status == -2:
 						get_tree().call_group('Building','_destroy',new_miot)
 					elif not build_status == -3:
-						get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local)
+						get_tree().call_group('Building','_give_data',build_status,new_miot,new_miot_local,"null")
 			#print(Global.built.find(selected))
 		if Input.is_action_just_released("RightClick") and Global.mouse_in_menu == false:
 			Global.building_id_selected = -1
@@ -368,10 +400,10 @@ func _is_viable(map_location):
 	else:
 		return false
 
-func _building(array_location, map_location, local):
+func _building(array_location, map_location, local, sprite_override):
 	var building = load_building.instantiate()
 	$Buildings.add_child(building)
-	get_tree().call_group('Building','_give_data',array_location,map_location,local)
+	get_tree().call_group('Building','_give_data',array_location,map_location,local,sprite_override)
 
 func _on_input_cooldown_timeout() -> void:
 	cooldown = false

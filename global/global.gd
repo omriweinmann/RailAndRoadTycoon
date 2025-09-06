@@ -2,8 +2,8 @@ extends Node
 
 var debug = false
 
-var width:int = 125
-var height:int = 125
+var width:int = 375
+var height:int = 375
 var altitude:float = 0
 
 var done_loading = false
@@ -26,26 +26,41 @@ var building_source = [
 		"Road", # Real Name
 		"res://asset/pictures/buildings/RoadOrientation", # File Location
 		".png", # File Format
-		true, # Removable (for example, industries are unremovable)
-		0, # Social Distancing (if procedurally generated, how many blocks away should industries not spawn?)
+		true, # Removable
+		[], # Procedu-Generated (Check Power Plant for true)
 	],
 	[
-		"Factory",
-		"res://asset/pictures/buildings/Factory",
+		"Power Plant",
+		"res://asset/pictures/buildings/PowerPlant",
 		".png",
 		false,
-		75,  
+		[ # True P-G
+			50, # Social Distancing - New industries can not be place with in _ of this industry
+			[0,0], # Extra (places more industies of the same type around
+			[], # Sprites For Extra
+			false, # Pollutes
+			-1, #Connects to, (what industry to auto gen next)
+		],
 	],
 	[
 		"Coal Mine",
 		"res://asset/pictures/buildings/CoalMine",
 		".png",
 		false,
-		50,  
+		[
+			75,
+			[5,2],
+			[
+				"res://asset/pictures/buildings/CoalMine0.png",
+				"res://asset/pictures/buildings/CoalMine1.png"
+			],
+			true, # Pollutes
+			1, #Connects to, (what industry to auto gen next)
+		],
 	]
 ]
 
-var proc_buildings = [1,2]
+var proc_buildings = [2]
 
 func _build(coords:Vector2i,_coords_local):
 	if not building_id_selected == -1:
@@ -64,7 +79,6 @@ func _build(coords:Vector2i,_coords_local):
 					]
 				)
 			else:
-				
 				built_data[find] = [
 					get_from_source[0],
 					built_data[find][1]
