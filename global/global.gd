@@ -4,14 +4,17 @@ var debug = false
 
 var road_changers = [0,3]
 
-var width:int = 375
-var height:int = 375
+var width:int = 125
+var height:int = 125
 var altitude:float = 0
 
 var sprite = []
 var loaded_sprite = []
 
 var done_loading = false
+
+var truck_stations = {} # { (0,0): [,0,"Truck Station 1"]
+var truck_stations_n_i = 0
 
 var industries_per_100 = 5
 
@@ -25,6 +28,7 @@ var built:Array = []
 var built_data:Array = []
 
 var building_id_selected = -1
+var orientation_selected = 0
 
 var building_source = [
 	[
@@ -34,6 +38,7 @@ var building_source = [
 		true, # Removable
 		[], # Procedu-Generated (Check Power Plant for true)
 		0, # ZIndex
+		0, # Max Orientation
 	],
 	[
 		"Power Plant",
@@ -54,6 +59,7 @@ var building_source = [
 			-1, #Connects to, (what industry to auto gen next)
 		],
 		1,
+		0,
 	],
 	[
 		"Coal Mine",
@@ -71,6 +77,7 @@ var building_source = [
 			1, #Connects to, (what industry to auto gen next)
 		],
 		1,
+		0,
 	],
 	[
 		"Warehouse", # Real Name
@@ -79,6 +86,16 @@ var building_source = [
 		true, # Removable
 		[], # Procedu-Generated (Check Power Plant for true)
 		1, # ZIndex
+		0,
+	],
+	[
+		"Truck Station",
+		"res://asset/pictures/buildings/TruckStation",
+		".png",
+		true,
+		[], 
+		1, 
+		1,
 	],
 ]
 
@@ -97,13 +114,20 @@ func _build(coords:Vector2i,_coords_local):
 				built_data.push_front(
 					[
 						get_from_source[0],
-						building_id_selected
+						building_id_selected,
+						Global.orientation_selected
 					]
 				)
+				if building_id_selected == 4:
+					truck_stations.get_or_add(coords)
+					truck_stations_n_i += 1
+					truck_stations[coords] = [orientation_selected, "Truck Station " + str(truck_stations_n_i)]
+					#print(truck_stations)
 			else:
 				built_data[find] = [
 					get_from_source[0],
-					built_data[find][1]
+					built_data[find][1],
+					built_data[find][2]
 				]
 				#print(built_data[find])
 			#print(get_from_source[3])
@@ -112,15 +136,18 @@ func _build(coords:Vector2i,_coords_local):
 	return -3
 func _remove(array_location):
 	if building_source[built_data[array_location][1]][3] == true:
+		if built_data[array_location][1] == 4:
+			truck_stations.erase(built[array_location])
+			#print(truck_stations)
 		built.remove_at(array_location)
 		built_data.remove_at(array_location)
 		return -2
 	error_pop_up = {"Title": "Invalid Action.", "Description": "One of the buildings you tried to destroy is unremovable (i.e. Industries)."}
 	return -3
 	
-func _get_building_id_of_v2i(v2i:Vector2i):
+func _get_building_info_of_v2i(v2i:Vector2i):
 	var get_array_location = built.find(v2i)
 	if get_array_location == -1:
-		return -1
+		return []
 	else:
-		return built_data[get_array_location][1]
+		return built_data[get_array_location]

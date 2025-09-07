@@ -1,7 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://5o3c4rboe6om"]
+[gd_scene load_steps=4 format=3 uid="uid://5o3c4rboe6om"]
 
 [ext_resource type="Theme" uid="uid://yraq1tvsgd0m" path="res://asset/theme/base_theme.tres" id="1_jpc7t"]
 [ext_resource type="Script" uid="uid://bnoky8m1vq1vg" path="res://scenes/gameplay_ui.gd" id="2_wf0n7"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wf0n7"]
+bg_color = Color(0.61339, 0.61339, 0.61339, 1)
+border_width_left = 3
+border_width_top = 3
+border_width_right = 3
+border_width_bottom = 3
+border_color = Color(0.29219, 0.29219, 0.29219, 1)
 
 [node name="GameplayUi" type="Control"]
 layout_mode = 3
@@ -23,6 +31,12 @@ offset_right = 135.0
 offset_bottom = 26.0
 grow_horizontal = 2
 
+[node name="Route" type="Button" parent="Top"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 24
+toggle_mode = true
+text = "Routes"
+
 [node name="Destroy" type="Button" parent="Top"]
 layout_mode = 2
 theme_override_font_sizes/font_size = 24
@@ -36,11 +50,8 @@ theme = ExtResource("1_jpc7t")
 [node name="Automobile" type="PopupMenu" parent="Top/MenuBar"]
 title = "Automobiles"
 theme = ExtResource("1_jpc7t")
-item_count = 2
-item_0/text = "Road"
-item_0/id = 0
-item_1/text = "Warehouse"
-item_1/id = 1
+
+[node name="TruckStation" type="PopupMenu" parent="Top/MenuBar/Automobile"]
 
 [node name="Debug" type="PopupMenu" parent="Top/MenuBar"]
 auto_translate_mode = 1
@@ -52,8 +63,39 @@ item_0/id = 0
 item_1/text = "Coal Mine"
 item_1/id = 1
 
+[node name="Routing" type="Panel" parent="."]
+visible = false
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -200.0
+offset_right = 300.0
+grow_vertical = 0
+
+[node name="ScrollContainer" type="ScrollContainer" parent="Routing"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+scale = Vector2(1, 0.85)
+pivot_offset = Vector2(0, 200)
+
+[node name="Panel" type="Panel" parent="Routing/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_wf0n7")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Routing/ScrollContainer/Panel"]
+layout_mode = 2
+
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="toggled" from="Top/Route" to="." method="_on_destroy_toggled"]
 [connection signal="toggled" from="Top/Destroy" to="." method="_on_destroy_toggled"]
 [connection signal="id_pressed" from="Top/MenuBar/Automobile" to="." method="_on_automobile_id_pressed"]
+[connection signal="id_pressed" from="Top/MenuBar/Automobile/TruckStation" to="." method="_on_truck_station_id_pressed"]
 [connection signal="id_pressed" from="Top/MenuBar/Debug" to="." method="_on_debug_id_pressed"]

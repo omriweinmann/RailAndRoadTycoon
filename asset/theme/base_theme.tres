@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=8 format=3 uid="uid://yraq1tvsgd0m"]
+[gd_resource type="Theme" load_steps=9 format=3 uid="uid://yraq1tvsgd0m"]
 
 [ext_resource type="FontFile" uid="uid://dx7eq46m48vtc" path="res://asset/font/HomeVideo-BLG6G.ttf" id="1_mgwit"]
 
@@ -36,6 +36,11 @@ border_width_right = 3
 border_width_bottom = 3
 border_color = Color(0.385492, 0.385493, 0.385492, 1)
 
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_mgwit"]
+color = Color(0.881937, 0.881937, 0.881937, 1)
+grow_end = 0.0
+thickness = 3
+
 [resource]
 default_font = ExtResource("1_mgwit")
 Button/styles/disabled = SubResource("StyleBoxFlat_mgwit")
@@ -59,4 +64,6 @@ PopupMenu/font_sizes/font_separator_size = 24
 PopupMenu/font_sizes/font_size = 24
 PopupMenu/font_sizes/title_font_size = 24
 PopupMenu/styles/hover = SubResource("StyleBoxFlat_pge2y")
+PopupMenu/styles/labeled_separator_left = SubResource("StyleBoxLine_mgwit")
+PopupMenu/styles/labeled_separator_right = SubResource("StyleBoxLine_mgwit")
 PopupMenu/styles/panel = SubResource("StyleBoxFlat_wxshh")
