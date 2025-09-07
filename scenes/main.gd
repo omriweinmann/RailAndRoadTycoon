@@ -11,9 +11,9 @@ var seed:int = Global.seed
 
 var debug:bool = Global.debug
 
-var mouse_good = load("res://asset/pictures/select/MouseLocation.png")
-var mouse_destroy = load("res://asset/pictures/select/Select1.png")
-var mouse_bad = load("res://asset/pictures/select/MouseLocationBad.png")
+var mouse_good = _load("res://asset/pictures/select/MouseLocation.png")
+var mouse_destroy = _load("res://asset/pictures/select/Select1.png")
+var mouse_bad = _load("res://asset/pictures/select/MouseLocationBad.png")
 
 var done_loading = Global.done_loading
 
@@ -39,8 +39,8 @@ var atlas_heightfloor:int = atlas_height - 1
 @export var texture_size_x = 64
 @export var texture_size_y = 40
 
-var load_label: PackedScene = load("res://scenes/label.tscn")
-var load_building: PackedScene = load("res://scenes/building.tscn")
+var load_label: PackedScene = _load("res://scenes/label.tscn")
+var load_building: PackedScene = _load("res://scenes/building.tscn")
 
 var random = RandomNumberGenerator.new()
 var cooldown = false
@@ -284,7 +284,7 @@ func _process(delta: float) -> void:
 				#selected = Vector2i(mouse_is_on_tile)
 			#else:
 				#selected = Vector2i(-1, -1)
-			elif Global.building_id_selected == 1 or Global.building_id_selected == 2:
+			else: #Global.building_id_selected == 1 or Global.building_id_selected == 2:
 				var new_miot = mouse_is_on_tile
 				var new_miot_local = miot_local
 				if _is_viable(new_miot):
@@ -403,6 +403,7 @@ func _is_viable(map_location):
 func _building(array_location, map_location, local, sprite_override):
 	var building = load_building.instantiate()
 	$Buildings.add_child(building)
+	building.z_index = Global.building_source[Global.building_id_selected][5]
 	get_tree().call_group('Building','_give_data',array_location,map_location,local,sprite_override)
 
 func _on_input_cooldown_timeout() -> void:
@@ -420,4 +421,14 @@ func _drag_line_build(mouse_is_on_tile):
 		if abs(var_to_use) == var_to_use:
 			negative = false
 		return [var_to_use,negative,y_question]
+		
+func _load(sprite):
+	var find = Global.sprite.find(sprite)
+	if not find == -1:
+		return Global.loaded_sprite[find]
+	else:
+		var load_sprite = load(sprite)
+		Global.sprite.append(sprite)
+		Global.loaded_sprite.append(load_sprite)
+		return load_sprite
 	

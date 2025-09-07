@@ -19,26 +19,42 @@ func _give_data(array_location,map_location,local,sprite_override):
 				get_tree().call_group("Building","_change_sprite",0)
 			if info[1] == 1 or info[1] == 2:
 				#print(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
-				$Sprite2D.texture = load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+				$Sprite2D.texture = _load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+			if info[1] == 3:
+				$Sprite2D.texture = _load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
+				get_tree().call_group("Building","_change_sprite",0)
 		else:
-			$Sprite2D.texture = load(sprite_override)
+			$Sprite2D.texture = _load(sprite_override)
 func _destroy(map_location):
 	if tilemap==map_location and Global.building_source[my_b_id][3] == true:
-		if my_b_id == 0:
+		if not Global.road_changers.find(my_b_id) == -1:
 			get_tree().call_group("Building","_change_sprite",0)
 		queue_free()
 func _change_sprite(b_id):
-	if my_b_id == b_id:
+	if not Global.road_changers.find(my_b_id) == -1 and not Global.road_changers.find(b_id) == -1:
 		var check1 = "0"
-		if Global._get_building_id_of_v2i(tilemap+Vector2i(0,-1)) == 0:
+		if not Global.road_changers.find(Global._get_building_id_of_v2i(tilemap+Vector2i(0,-1))) == -1:
 			check1 = "1"
 		var check2 = "0"
-		if Global._get_building_id_of_v2i(tilemap+Vector2i(-1,0)) == 0:
+		if not Global.road_changers.find(Global._get_building_id_of_v2i(tilemap+Vector2i(-1,0))) == -1:
 			check2 = "1"
 		var check3 = "0"
-		if Global._get_building_id_of_v2i(tilemap+Vector2i(1,0)) == 0:
+		if not Global.road_changers.find(Global._get_building_id_of_v2i(tilemap+Vector2i(1,0))) == -1:
 			check3 = "1"
 		var check4 = "0"
-		if Global._get_building_id_of_v2i(tilemap+Vector2i(0,1)) == 0:
+		if not Global.road_changers.find(Global._get_building_id_of_v2i(tilemap+Vector2i(0,1))) == -1:
 			check4 = "1"
-		$Sprite2D.texture = load(Global.building_source[b_id][1] + check1 + check2 + check3 + check4 + Global.building_source[b_id][2])
+		if my_b_id == 3:
+			$LowerSprite.texture = _load(Global.building_source[0][1] + check1 + check2 + check3 + check4 + Global.building_source[0][2])
+		else:
+			$Sprite2D.texture = _load(Global.building_source[b_id][1] + check1 + check2 + check3 + check4 + Global.building_source[b_id][2])
+
+func _load(sprite):
+	var find = Global.sprite.find(sprite)
+	if not find == -1:
+		return Global.loaded_sprite[find]
+	else:
+		var load_sprite = load(sprite)
+		Global.sprite.append(sprite)
+		Global.loaded_sprite.append(load_sprite)
+		return load_sprite

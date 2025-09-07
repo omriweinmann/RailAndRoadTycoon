@@ -36,9 +36,11 @@ theme = ExtResource("1_jpc7t")
 [node name="Automobile" type="PopupMenu" parent="Top/MenuBar"]
 title = "Automobiles"
 theme = ExtResource("1_jpc7t")
-item_count = 1
+item_count = 2
 item_0/text = "Road"
 item_0/id = 0
+item_1/text = "Warehouse"
+item_1/id = 1
 
 [node name="Debug" type="PopupMenu" parent="Top/MenuBar"]
 auto_translate_mode = 1

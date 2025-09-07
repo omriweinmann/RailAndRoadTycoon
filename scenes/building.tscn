@@ -5,6 +5,8 @@
 [node name="Building" type="Area2D" groups=["Building"]]
 script = ExtResource("1_n8bkc")
 
+[node name="LowerSprite" type="Sprite2D" parent="."]
+
 [node name="Sprite2D" type="Sprite2D" parent="."]
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]

@@ -2,9 +2,14 @@ extends Node
 
 var debug = false
 
+var road_changers = [0,3]
+
 var width:int = 375
 var height:int = 375
 var altitude:float = 0
+
+var sprite = []
+var loaded_sprite = []
 
 var done_loading = false
 
@@ -28,6 +33,7 @@ var building_source = [
 		".png", # File Format
 		true, # Removable
 		[], # Procedu-Generated (Check Power Plant for true)
+		0, # ZIndex
 	],
 	[
 		"Power Plant",
@@ -47,6 +53,7 @@ var building_source = [
 			false, # Pollutes
 			-1, #Connects to, (what industry to auto gen next)
 		],
+		1,
 	],
 	[
 		"Coal Mine",
@@ -63,7 +70,16 @@ var building_source = [
 			true, # Pollutes
 			1, #Connects to, (what industry to auto gen next)
 		],
-	]
+		1,
+	],
+	[
+		"Warehouse", # Real Name
+		"res://asset/pictures/buildings/Warehouse", # File Location
+		".png", # File Format
+		true, # Removable
+		[], # Procedu-Generated (Check Power Plant for true)
+		1, # ZIndex
+	],
 ]
 
 var proc_buildings = [2]
