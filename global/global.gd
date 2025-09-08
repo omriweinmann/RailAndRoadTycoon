@@ -13,8 +13,10 @@ var loaded_sprite = []
 
 var done_loading = false
 
-var truck_stations = {} # { (0,0): [,0,"Truck Station 1"]
+var truck_stations = {} # { (0,0): [0,"Truck Station 1"]}
 var truck_stations_n_i = 0
+
+var routes = {} # { 0: [[(0,0), 0], [(2,3), 3]]}
 
 var industries_per_100 = 5
 
@@ -105,7 +107,9 @@ func _build(coords:Vector2i,_coords_local):
 	if not building_id_selected == -1:
 		var find = built.find(coords)
 		#print(find,",",coords)
-		if building_id_selected == -2 and not find == -1:
+		if building_id_selected == -4:
+			get_tree().call_group("GameplayUI", "_add_to_route", coords)
+		elif building_id_selected == -2 and not find == -1:
 			return _remove(find)
 		elif not building_id_selected == -2:
 			var get_from_source = building_source[building_id_selected]

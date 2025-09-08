@@ -190,7 +190,7 @@ func _process(delta: float) -> void:
 			#min_zoom += 0.025
 			#var zoom = $Camera2D.zoom
 			#$Camera2D.zoom = Vector2(max(min_zoom,min(max_zoom,zoom.x)),max(min_zoom,min(max_zoom,zoom.y)))
-		if cooldown == false:
+		if cooldown == false and Global.mouse_in_menu == false:
 			cooldown = true
 			#print(zoom_dir)
 			var pre_pos = $BG.position + pan_addition
@@ -208,6 +208,8 @@ func _process(delta: float) -> void:
 			$Camera2D.position = $BG.position
 			#print($Camera2D.zoom, max_zoom, min_zoom+0.025)
 			$BG.scale = Vector2((vp_size[0] / 128)/$Camera2D.zoom[0], (vp_size[1] / 128)/$Camera2D.zoom[0])
+		elif cooldown == false:
+			zoom_dir = 0.0
 		if Input.is_action_just_pressed("Restart"):
 			get_tree().change_scene_to_file("res://scenes/main.tscn")
 		#print(get_local_mouse_position())
