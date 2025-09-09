@@ -39,6 +39,28 @@ grow_vertical = 2
 theme = ExtResource("1_jpc7t")
 script = ExtResource("2_wf0n7")
 
+[node name="Money" type="Button" parent="."]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -87.5
+offset_top = -26.0
+offset_right = 87.5
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_disabled_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_pressed_color = Color(0, 0, 0, 1)
+theme_override_colors/font_hover_color = Color(0, 0, 0, 1)
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_focus_color = Color(0, 0, 0, 1)
+theme_override_colors/font_pressed_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 18
+text = "This is your god"
+
 [node name="Top" type="HBoxContainer" parent="."]
 layout_mode = 1
 anchors_preset = 5
@@ -90,6 +112,7 @@ item_1/text = "Coal Mine"
 item_1/id = 1
 
 [node name="Routing" type="Panel" parent="."]
+visible = false
 layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
@@ -170,8 +193,98 @@ text = "Delete"
 [node name="Options" type="OptionButton" parent="Routing/Top/MarginContainer2/HBoxContainer"]
 layout_mode = 2
 
+[node name="AutomobileShop" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_top = -65.0
+offset_right = 393.0
+grow_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_wf0n7")
+
+[node name="Top" type="VBoxContainer" parent="AutomobileShop"]
+layout_mode = 1
+offset_right = 393.0
+offset_bottom = 40.0
+theme_override_constants/separation = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="AutomobileShop/Top"]
+layout_mode = 2
+theme_override_constants/margin_top = 3
+
+[node name="Title" type="Label" parent="AutomobileShop/Top/MarginContainer"]
+layout_mode = 2
+text = "Automobile Shop"
+horizontal_alignment = 1
+
+[node name="MarginContainer2" type="MarginContainer" parent="AutomobileShop/Top"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AutomobileShop/Top/MarginContainer2"]
+layout_mode = 2
+
+[node name="AutomobileIDTitle" type="Label" parent="AutomobileShop/Top/MarginContainer2/HBoxContainer"]
+layout_mode = 2
+text = "Automobile ID:"
+
+[node name="AutomobileID" type="SpinBox" parent="AutomobileShop/Top/MarginContainer2/HBoxContainer"]
+layout_mode = 2
+max_value = 999.0
+
+[node name="Delete" type="Button" parent="AutomobileShop/Top/MarginContainer2/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_thbl6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wfuiq")
+text = "Sell"
+
+[node name="Delete2" type="Button" parent="AutomobileShop/Top/MarginContainer2/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_thbl6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wfuiq")
+text = "Buy"
+
+[node name="Options" type="OptionButton" parent="AutomobileShop/Top/MarginContainer2/HBoxContainer"]
+layout_mode = 2
+
+[node name="MarginContainer3" type="MarginContainer" parent="AutomobileShop/Top"]
+layout_mode = 2
+theme_override_constants/margin_left = 6
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 6
+
+[node name="HBoxContainer" type="HBoxContainer" parent="AutomobileShop/Top/MarginContainer3"]
+layout_mode = 2
+
+[node name="RouteIDTitle" type="Label" parent="AutomobileShop/Top/MarginContainer3/HBoxContainer"]
+layout_mode = 2
+text = "Route ID:"
+
+[node name="RouteID" type="SpinBox" parent="AutomobileShop/Top/MarginContainer3/HBoxContainer"]
+layout_mode = 2
+max_value = 999.0
+
+[node name="Delete" type="Button" parent="AutomobileShop/Top/MarginContainer3/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wfuiq")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_thbl6")
+theme_override_styles/normal = SubResource("StyleBoxFlat_wfuiq")
+text = "Skip Station"
+
+[node name="Options" type="OptionButton" parent="AutomobileShop/Top/MarginContainer3/HBoxContainer"]
+layout_mode = 2
+
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="pressed" from="Money" to="." method="_on_money_pressed"]
 [connection signal="toggled" from="Top/Route" to="." method="_on_route_toggled"]
 [connection signal="toggled" from="Top/Destroy" to="." method="_on_destroy_toggled"]
 [connection signal="id_pressed" from="Top/MenuBar/Automobile" to="." method="_on_automobile_id_pressed"]

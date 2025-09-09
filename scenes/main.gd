@@ -53,6 +53,7 @@ func _ready() -> void:
 	Global.built_data = []
 	Global.error_pop_up = {"Title": "Nil", "Description": "Nil"}
 	Global.done_loading = false
+	Global.money_base = 100000
 	rng.seed = seed
 	var vp_size = get_viewport().get_visible_rect().size
 	$BG.position = Vector2(texture_size_x*width/2, 0)

@@ -22,6 +22,7 @@ func _load_route_options() -> void:
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Unload")
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Load and Unload")
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.select(0)
+	
 func _on_mouse_entered() -> void:
 	Global.mouse_in_menu = false
 	#print(false)
@@ -41,6 +42,10 @@ func _process(delta: float) -> void:
 	else:
 		$Top/Route.button_pressed = false
 		$Routing.visible = false
+	if Global.money_conversions[Global.conversion_selected][3] == false:
+		$Money.text = Global.money_conversions[Global.conversion_selected][1] + " " + str(Global.money_base*Global.money_conversions[Global.conversion_selected][2])
+	else:
+		$Money.text = str(Global.money_base*Global.money_conversions[Global.conversion_selected][2]) + " " + Global.money_conversions[Global.conversion_selected][1]
 	#pass
 	
 func _on_route_toggled(toggled_on: bool) -> void:
@@ -111,3 +116,9 @@ func _on_route_delete_pressed() -> void:
 	if array.size() > 0:
 		array.remove_at(array.size()-1)
 		_load_route(route_selected)
+
+
+func _on_money_pressed() -> void:
+	Global.conversion_selected += 1
+	if Global.conversion_selected > Global.money_conversions.size()-1:
+		Global.conversion_selected = 0

@@ -32,6 +32,19 @@ var built_data:Array = []
 var building_id_selected = -1
 var orientation_selected = 0
 
+var money_base = 100000
+
+var conversion_selected = 0
+var money_conversions = [
+	["Pound","£",1,false,],
+	["Dollar","$",2,false],
+	["Euro","€",2,false],
+	["Koruna","Kč",28,true],
+	["Shekel","₪",4,false],
+	["Bolivar (2021)","VES (2021)",5711960,true],
+	#["WeinBucks","WnB",1,true]
+]
+
 var building_source = [
 	[
 		"Road", # Real Name
@@ -41,6 +54,7 @@ var building_source = [
 		[], # Procedu-Generated (Check Power Plant for true)
 		0, # ZIndex
 		0, # Max Orientation
+		100,
 	],
 	[
 		"Power Plant",
@@ -62,6 +76,7 @@ var building_source = [
 		],
 		1,
 		0,
+		0,
 	],
 	[
 		"Coal Mine",
@@ -80,6 +95,7 @@ var building_source = [
 		],
 		1,
 		0,
+		0,
 	],
 	[
 		"Warehouse", # Real Name
@@ -89,6 +105,7 @@ var building_source = [
 		[], # Procedu-Generated (Check Power Plant for true)
 		1, # ZIndex
 		0,
+		1000,
 	],
 	[
 		"Truck Station",
@@ -98,6 +115,7 @@ var building_source = [
 		[], 
 		1, 
 		1,
+		2000,
 	],
 ]
 
@@ -122,6 +140,7 @@ func _build(coords:Vector2i,_coords_local):
 						Global.orientation_selected
 					]
 				)
+				money_base -= get_from_source[7] * 0.8
 				if building_id_selected == 4:
 					truck_stations.get_or_add(coords)
 					truck_stations_n_i += 1
@@ -145,6 +164,7 @@ func _remove(array_location):
 			#print(truck_stations)
 		built.remove_at(array_location)
 		built_data.remove_at(array_location)
+		money_base += building_source[built_data[array_location][1]][7] * 0.8
 		return -2
 	error_pop_up = {"Title": "Invalid Action.", "Description": "One of the buildings you tried to destroy is unremovable (i.e. Industries)."}
 	return -3
