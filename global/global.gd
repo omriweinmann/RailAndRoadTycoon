@@ -18,6 +18,13 @@ var truck_stations_n_i = 0
 
 var routes = {} # { 0: [[(0,0), 0], [(2,3), 3]]}
 
+var warehouses = {}
+var warehouses_n_i = 0
+
+var vehicle_shop = [
+	["Truck",10000]
+]
+
 var industries_per_100 = 5
 
 var seed:int = -1
@@ -127,6 +134,8 @@ func _build(coords:Vector2i,_coords_local):
 		#print(find,",",coords)
 		if building_id_selected == -4:
 			get_tree().call_group("GameplayUI", "_add_to_route", coords)
+		elif building_id_selected == -5:
+			get_tree().call_group("GameplayUI", "_select_warehouse", coords)
 		elif building_id_selected == -2 and not find == -1:
 			return _remove(find)
 		elif not building_id_selected == -2:
@@ -144,8 +153,13 @@ func _build(coords:Vector2i,_coords_local):
 				if building_id_selected == 4:
 					truck_stations.get_or_add(coords)
 					truck_stations_n_i += 1
-					truck_stations[coords] = [orientation_selected, "Truck Station " + str(truck_stations_n_i)]
+					truck_stations[coords] = [orientation_selected, "Truck Station #" + str(truck_stations_n_i)]
 					#print(truck_stations)
+				elif building_id_selected == 3:
+					warehouses.get_or_add(coords)
+					warehouses_n_i += 1
+					warehouses[coords] = ["Truck Warehouse #" + str(warehouses_n_i)]
+					#print(warehouses)
 			else:
 				built_data[find] = [
 					get_from_source[0],
@@ -161,6 +175,9 @@ func _remove(array_location):
 	if building_source[built_data[array_location][1]][3] == true:
 		if built_data[array_location][1] == 4:
 			truck_stations.erase(built[array_location])
+			#print(truck_stations)
+		if built_data[array_location][1] == 5:
+			warehouses.erase(built[array_location])
 			#print(truck_stations)
 		built.remove_at(array_location)
 		built_data.remove_at(array_location)

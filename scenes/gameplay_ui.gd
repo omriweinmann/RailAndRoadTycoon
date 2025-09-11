@@ -2,6 +2,7 @@ extends Control
 
 var route_selected:int = 0
 var load_type_selected:int = 0
+var warehouse_selected := Vector2i(0,0)
 
 func _ready() -> void:
 	_load_automobile()
@@ -42,6 +43,22 @@ func _process(delta: float) -> void:
 	else:
 		$Top/Route.button_pressed = false
 		$Routing.visible = false
+	if Global.building_id_selected == -2:
+		$Top/Destroy.button_pressed = true
+	else:
+		$Top/Destroy.button_pressed = false
+	if Global.building_id_selected == -4:
+		$Top/Route.button_pressed = true
+		$Routing.visible = true
+	else:
+		$Top/Route.button_pressed = false
+		$Routing.visible = false
+	if Global.building_id_selected == -5:
+		$Top/Warehouses.button_pressed = true
+		$Warehouse.visible = true
+	else:
+		$Top/Warehouses.button_pressed = false
+		$Warehouse.visible = false
 	if Global.money_conversions[Global.conversion_selected][3] == false:
 		$Money.text = Global.money_conversions[Global.conversion_selected][1] + " " + str(Global.money_base*Global.money_conversions[Global.conversion_selected][2])
 	else:
@@ -122,3 +139,18 @@ func _on_money_pressed() -> void:
 	Global.conversion_selected += 1
 	if Global.conversion_selected > Global.money_conversions.size()-1:
 		Global.conversion_selected = 0
+
+
+func _on_warehouses_toggled(toggled_on: bool) -> void:
+	if toggled_on == true:
+		Global.building_id_selected = -5
+	elif Global.building_id_selected == -5:
+		Global.building_id_selected = -1
+		
+func _select_warehouse(miot):
+	var find = Global.warehouses.get(miot,[])
+	if not find == []:
+		warehouse_selected = miot
+		$Warehouse/Top/MarginContainer/Title.text = "Selected: " + find[0] + str(miot)
+	else:
+		Global.error_pop_up = {"Title": "Invalid Action.", "Description": "Only warehouses can be selected."}
