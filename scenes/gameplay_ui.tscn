@@ -275,7 +275,7 @@ max_value = 999.0
 layout_mode = 2
 text = "Vehicle:"
 
-[node name="RouteID2" type="SpinBox" parent="Warehouse/Top/MarginContainer2/HBoxContainer"]
+[node name="VehicleID" type="SpinBox" parent="Warehouse/Top/MarginContainer2/HBoxContainer"]
 layout_mode = 2
 max_value = 999.0
 
@@ -290,6 +290,9 @@ layout_mode = 2
 
 [node name="Vehicle" type="OptionButton" parent="Warehouse/Top/MarginContainer3/HBoxContainer"]
 layout_mode = 2
+item_count = 1
+popup/item_0/text = "Nothing"
+popup/item_0/id = 0
 
 [node name="Buy" type="Button" parent="Warehouse/Top/MarginContainer3/HBoxContainer"]
 layout_mode = 2
@@ -320,7 +323,6 @@ text = "Sell"
 [connection signal="pressed" from="Routing/Top/MarginContainer2/HBoxContainer/Delete" to="." method="_on_route_delete_pressed"]
 [connection signal="item_selected" from="Routing/Top/MarginContainer2/HBoxContainer/Options" to="." method="_on_route_options_item_selected"]
 [connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/RouteID" to="." method="_on_route_id_value_changed"]
-[connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/RouteID2" to="." method="_on_route_id_value_changed"]
-[connection signal="item_selected" from="Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle" to="." method="_on_route_options_item_selected"]
-[connection signal="pressed" from="Warehouse/Top/MarginContainer3/HBoxContainer/Buy" to="." method="_on_route_delete_pressed"]
-[connection signal="pressed" from="Warehouse/Top/MarginContainer3/HBoxContainer/Sell" to="." method="_on_route_delete_pressed"]
+[connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID" to="." method="_on_vehicle_id_value_changed"]
+[connection signal="item_selected" from="Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle" to="." method="_on_vehicle_item_selected"]
+[connection signal="pressed" from="Warehouse/Top/MarginContainer3/HBoxContainer/Buy" to="." method="_on_buy_pressed"]

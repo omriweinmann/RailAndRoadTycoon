@@ -4,10 +4,16 @@ var route_selected:int = 0
 var load_type_selected:int = 0
 var warehouse_selected := Vector2i(0,0)
 
+var selected_vehicle = "Nothing"
+var vehicle_id_selected = 0
+
 func _ready() -> void:
 	_load_automobile()
 	_load_route_options()
 	_load_route(route_selected)
+	for chi in Global.vehicle_shop:
+		print(chi)
+		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.add_item(chi)
 func _load_automobile() -> void:
 	$Top/MenuBar/Automobile.add_item("Road")
 	$Top/MenuBar/Automobile.add_item("Warehouse")
@@ -152,5 +158,50 @@ func _select_warehouse(miot):
 	if not find == []:
 		warehouse_selected = miot
 		$Warehouse/Top/MarginContainer/Title.text = "Selected: " + find[0] + str(miot)
+		_load_warehouse_vehicles(warehouse_selected)
 	else:
 		Global.error_pop_up = {"Title": "Invalid Action.", "Description": "Only warehouses can be selected."}
+	
+
+func _on_vehicle_item_selected(index: int) -> void:
+	selected_vehicle = $Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.get_item_text(index)
+	_load_warehouse_vehicles(warehouse_selected)
+	#print(selected_vehicle)
+
+
+func _on_buy_pressed() -> void:
+	if not selected_vehicle == "Nothing":
+		if Global.money_base >= Global.vehicle_shop[selected_vehicle][0]:
+			Global.money_base -= Global.vehicle_shop[selected_vehicle][0]
+			var warehouse:Array = Global.warehouses[warehouse_selected]
+			Global.vehicles_n_i += 1
+			warehouse[1].push_back([selected_vehicle,selected_vehicle+" #"+str(Global.vehicles_n_i)])
+			_load_warehouse_vehicles(warehouse_selected)
+			_on_vehicle_id_value_changed(warehouse[1].size())
+	
+func _load_warehouse_vehicles(warehouse):
+	vehicle_id_selected = 1
+	for child in $Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.get_children():
+		child.queue_free()
+	if Global.warehouses[warehouse][1] == []:
+		var label = Label.new()
+		label.text = "---No Vehicles Assigned---"
+		$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
+	else:
+		var x = 0
+		for child in Global.warehouses[warehouse][1]:
+			x += 1
+			var label = Label.new()
+			label.text = child[1]
+			if x == vehicle_id_selected:
+				label.add_theme_color_override("font_color", Color(1, 0.5, 0))
+			$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
+		
+
+
+func _on_vehicle_id_value_changed(value: float) -> void:
+	#print(value)
+	$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.min_value = 1.0
+	$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.max_value = Global.warehouses[warehouse_selected][1].size()
+	vehicle_id_selected = int(value)
+	_load_warehouse_vehicles(warehouse_selected)

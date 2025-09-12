@@ -20,10 +20,11 @@ var routes = {} # { 0: [[(0,0), 0], [(2,3), 3]]}
 
 var warehouses = {}
 var warehouses_n_i = 0
+var vehicles_n_i = 0
 
-var vehicle_shop = [
-	["Truck",10000]
-]
+var vehicle_shop = {
+	"Industrial Goods Truck": [10000]
+}
 
 var industries_per_100 = 5
 
@@ -158,8 +159,7 @@ func _build(coords:Vector2i,_coords_local):
 				elif building_id_selected == 3:
 					warehouses.get_or_add(coords)
 					warehouses_n_i += 1
-					warehouses[coords] = ["Truck Warehouse #" + str(warehouses_n_i)]
-					#print(warehouses)
+					warehouses[coords] = ["Truck Warehouse #" + str(warehouses_n_i),[]]
 			else:
 				built_data[find] = [
 					get_from_source[0],
