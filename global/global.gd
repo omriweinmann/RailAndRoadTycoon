@@ -23,7 +23,7 @@ var warehouses_n_i = 0
 var vehicles_n_i = 0
 
 var vehicle_shop = {
-	"Industrial Goods Truck": [10000]
+	"Industrial Goods Truck": [10000, "Indstr"]
 }
 
 var industries_per_100 = 5
@@ -176,8 +176,10 @@ func _remove(array_location):
 		if built_data[array_location][1] == 4:
 			truck_stations.erase(built[array_location])
 			#print(truck_stations)
-		if built_data[array_location][1] == 5:
-			warehouses.erase(built[array_location])
+		if built_data[array_location][1] == 3:
+			warehouses[built[array_location]] = []
+			print(warehouses)
+			get_tree().call_group("GameplayUI","_external_load_selected_wrh")
 			#print(truck_stations)
 		built.remove_at(array_location)
 		built_data.remove_at(array_location)

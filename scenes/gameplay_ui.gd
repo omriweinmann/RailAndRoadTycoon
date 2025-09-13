@@ -18,6 +18,7 @@ func _ready() -> void:
 	for chi in Global.vehicle_shop:
 		print(chi)
 		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.add_item(chi)
+	$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.select(0)
 func _load_automobile() -> void:
 	$Top/MenuBar/Automobile.add_item("Road")
 	$Top/MenuBar/Automobile.add_item("Warehouse")
@@ -186,7 +187,7 @@ func _on_vehicle_item_selected(index: int) -> void:
 		_load_warehouse_vehicles(warehouse_selected)
 			#print(selected_vehicle)
 	else:
-		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.select(-1)
+		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.select(0)
 
 
 func _on_buy_pressed() -> void:
@@ -195,29 +196,37 @@ func _on_buy_pressed() -> void:
 			Global.money_base -= Global.vehicle_shop[selected_vehicle][0]
 			var warehouse:Array = Global.warehouses[warehouse_selected]
 			Global.vehicles_n_i += 1
-			warehouse[1].push_back([selected_vehicle,"Automobile #"+str(Global.vehicles_n_i)])
+			warehouse[1].push_back([selected_vehicle,"Automobile #"+str(Global.vehicles_n_i)+" ("+Global.vehicle_shop[selected_vehicle][1]+")"])
 			_load_warehouse_vehicles(warehouse_selected)
 			_on_vehicle_id_value_changed(warehouse[1].size())
 	
 func _load_warehouse_vehicles(warehouse):
 	#print(Global.warehouses[warehouse_selected][1].size())
-	$Warehouse/Top/MarginContainer2/HBoxContainer/RouteID.value = float(Global.warehouses[warehouse_selected][2])
-	$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.min_value = min(1.0,Global.warehouses[warehouse_selected][1].size())
+	
 	for child in $Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.get_children():
 		child.queue_free()
-	if Global.warehouses[warehouse][1] == []:
+	if Global.warehouses[warehouse] == []:
 		var label = Label.new()
 		label.text = "---No Vehicles Assigned---"
 		$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
+		warehouse_selected = Vector2i(-1,-1)
+		selected_vehicle = "Nothing"
+		$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.min_value = 0
+		$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.max_value = 1
+		$Warehouse/Top/MarginContainer2/HBoxContainer/RouteID.value = 0
+		$Warehouse/Top/MarginContainer/Title.text = "Select Warehouse"
+		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.select(0)
 	else:
+		$Warehouse/Top/MarginContainer2/HBoxContainer/RouteID.value = float(Global.warehouses[warehouse_selected][2])
+		$Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID.min_value = min(1.0,Global.warehouses[warehouse_selected][1].size())
 		var x = 0
 		for child in Global.warehouses[warehouse][1]:
 			x += 1
 			var label = Label.new()
-			label.text = child[1]
+			label.text = "("+str(x)+"): " + child[1]
 			print(vehicle_id_selected)
 			if x == vehicle_id_selected:
-				label.add_theme_color_override("font_color", Color(1, 0.5, 0))
+				label.add_theme_color_override("font_color", Color(0.85, 0.425, 0))
 			$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
 		
 
@@ -254,3 +263,6 @@ func _on_sell_pressed() -> void:
 func _on_warehouse_route_id_value_changed(value: float) -> void:
 	if not warehouse_selected == Vector2i(-1,-1):
 		Global.warehouses[warehouse_selected][2] = int(value)
+
+func _external_load_selected_wrh() -> void:
+	_load_warehouse_vehicles(warehouse_selected)
