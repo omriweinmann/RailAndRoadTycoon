@@ -159,7 +159,7 @@ func _build(coords:Vector2i,_coords_local):
 				elif building_id_selected == 3:
 					warehouses.get_or_add(coords)
 					warehouses_n_i += 1
-					warehouses[coords] = ["Truck Warehouse #" + str(warehouses_n_i),[]]
+					warehouses[coords] = ["Truck Warehouse #" + str(warehouses_n_i),[],-1]
 			else:
 				built_data[find] = [
 					get_from_source[0],
@@ -181,7 +181,7 @@ func _remove(array_location):
 			#print(truck_stations)
 		built.remove_at(array_location)
 		built_data.remove_at(array_location)
-		money_base += building_source[built_data[array_location][1]][7] * 0.8
+		money_base += building_source[built_data[array_location][1]][7] * 0.4
 		return -2
 	error_pop_up = {"Title": "Invalid Action.", "Description": "One of the buildings you tried to destroy is unremovable (i.e. Industries)."}
 	return -3
@@ -192,3 +192,10 @@ func _get_building_info_of_v2i(v2i:Vector2i):
 		return []
 	else:
 		return built_data[get_array_location]
+		
+func _convert_currency(money):
+	if money_conversions[conversion_selected][3] == false:
+		return money_conversions[conversion_selected][1] + " " + str(money*money_conversions[conversion_selected][2])
+	else:
+		return str(money*money_conversions[conversion_selected][2]) + " " + money_conversions[conversion_selected][1]
+	return ""

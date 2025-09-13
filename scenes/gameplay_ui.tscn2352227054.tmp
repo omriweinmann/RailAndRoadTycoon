@@ -269,9 +269,7 @@ text = "Route:"
 
 [node name="RouteID" type="SpinBox" parent="Warehouse/Top/MarginContainer2/HBoxContainer"]
 layout_mode = 2
-min_value = -1.0
 max_value = 999.0
-value = -1.0
 
 [node name="VehicleIDTitle" type="Label" parent="Warehouse/Top/MarginContainer2/HBoxContainer"]
 layout_mode = 2
@@ -344,24 +342,8 @@ layout_mode = 2
 size_flags_horizontal = 2
 theme_override_font_sizes/normal_font_size = 12
 theme_override_font_sizes/bold_font_size = 15
-bbcode_enabled = true
 text = "No vehicle selected"
 fit_content = true
-
-[node name="MoneyChange" type="Label" parent="."]
-layout_mode = 1
-anchors_preset = 3
-anchor_left = 1.0
-anchor_top = 1.0
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -42.0
-offset_top = -21.0
-grow_horizontal = 0
-grow_vertical = 0
-theme_override_colors/font_color = Color(1, 0.327531, 0.331784, 1)
-theme_override_font_sizes/font_size = 12
-text = "N/A"
 
 [connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
 [connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
@@ -375,8 +357,7 @@ text = "N/A"
 [connection signal="value_changed" from="Routing/Top/MarginContainer2/HBoxContainer/RouteID" to="." method="_on_route_id_value_changed"]
 [connection signal="pressed" from="Routing/Top/MarginContainer2/HBoxContainer/Delete" to="." method="_on_route_delete_pressed"]
 [connection signal="item_selected" from="Routing/Top/MarginContainer2/HBoxContainer/Options" to="." method="_on_route_options_item_selected"]
-[connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/RouteID" to="." method="_on_warehouse_route_id_value_changed"]
+[connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/RouteID" to="." method="_on_route_id_value_changed"]
 [connection signal="value_changed" from="Warehouse/Top/MarginContainer2/HBoxContainer/VehicleID" to="." method="_on_vehicle_id_value_changed"]
 [connection signal="item_selected" from="Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle" to="." method="_on_vehicle_item_selected"]
 [connection signal="pressed" from="Warehouse/Top/MarginContainer3/HBoxContainer/Buy" to="." method="_on_buy_pressed"]
-[connection signal="pressed" from="Warehouse/Top/MarginContainer3/HBoxContainer/Sell" to="." method="_on_sell_pressed"]
