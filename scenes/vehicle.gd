@@ -27,7 +27,7 @@ func _give_data(v_info):
 		my_v_source = get_v_source
 		position = Global.map_to_local[get_warehouse][0]
 		$Sprite2D.texture = _load("res://asset/pictures/vehicles/IndustrialGoodsTruck0001.png")
-		print(_scary_pathfinding(get_warehouse,Vector2i(0,0)))
+		_scary_pathfinding(get_warehouse,Vector2i(0,0))
 		
 func _get_warehouse_vehicle():
 	for ve in Global.warehouses[my_warehouse][1]:
@@ -36,6 +36,7 @@ func _get_warehouse_vehicle():
 	return []
 	
 func _scary_pathfinding(start_miot:Vector2i, end_miot:Vector2i):
+	#await get_tree().create_timer(10, true, true).timeout
 	var open = {
 		Vector2i(-10,-10): [
 			Vector2i(-1,-1), 
