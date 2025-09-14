@@ -16,7 +16,7 @@ func _ready() -> void:
 	_load_route_options()
 	_load_route(route_selected)
 	for chi in Global.vehicle_shop:
-		print(chi)
+		#print(chi)
 		$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.add_item(chi)
 	$Warehouse/Top/MarginContainer3/HBoxContainer/Vehicle.select(0)
 func _load_automobile() -> void:
@@ -103,7 +103,7 @@ func _on_automobile_id_pressed(id: int) -> void:
 	for building_source in Global.building_source:
 		if building_source[0] == text:
 			Global.building_id_selected = Global.building_source.find(building_source)
-			print(Global.building_id_selected)
+			#print(Global.building_id_selected)
 			break
 
 func _on_debug_id_pressed(id: int) -> void:
@@ -111,7 +111,7 @@ func _on_debug_id_pressed(id: int) -> void:
 	for building_source in Global.building_source:
 		if building_source[0] == text:
 			Global.building_id_selected = Global.building_source.find(building_source)
-			print(Global.building_id_selected)
+			#print(Global.building_id_selected)
 			break
 
 func _on_truck_station_id_pressed(id: int) -> void:
@@ -196,16 +196,22 @@ func _on_buy_pressed() -> void:
 			Global.money_base -= Global.vehicle_shop[selected_vehicle][0]
 			var warehouse:Array = Global.warehouses[warehouse_selected]
 			Global.vehicles_n_i += 1
-			warehouse[1].push_back([selected_vehicle,"Automobile #"+str(Global.vehicles_n_i)+" ("+Global.vehicle_shop[selected_vehicle][1]+")"])
+			warehouse[1].push_back([
+				selected_vehicle,
+				"Automobile #"+str(Global.vehicles_n_i)+" ("+Global.vehicle_shop[selected_vehicle][1]+")",
+				warehouse_selected
+			])
 			_load_warehouse_vehicles(warehouse_selected)
 			_on_vehicle_id_value_changed(warehouse[1].size())
-	
+			#print("b")
+			Global._send_to_main("Main","_vehicle",[warehouse_selected,"Automobile #"+str(Global.vehicles_n_i)+" ("+Global.vehicle_shop[selected_vehicle][1]+")",selected_vehicle])
+			
 func _load_warehouse_vehicles(warehouse):
 	#print(Global.warehouses[warehouse_selected][1].size())
 	
 	for child in $Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.get_children():
 		child.queue_free()
-	if Global.warehouses[warehouse] == []:
+	if warehouse == Vector2i(-1,-1) or Global.warehouses[warehouse] == []:
 		var label = Label.new()
 		label.text = "---No Vehicles Assigned---"
 		$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
@@ -224,7 +230,7 @@ func _load_warehouse_vehicles(warehouse):
 			x += 1
 			var label = Label.new()
 			label.text = "("+str(x)+"): " + child[1]
-			print(vehicle_id_selected)
+			#print(vehicle_id_selected)
 			if x == vehicle_id_selected:
 				label.add_theme_color_override("font_color", Color(0.85, 0.425, 0))
 			$Warehouse/Panel/MarginContainer/Bottom/VBoxContainer.add_child(label)
@@ -256,7 +262,7 @@ func _on_sell_pressed() -> void:
 		vehicles.erase(vehicle)
 		_on_vehicle_id_value_changed(vehicle_id_selected-1)
 		_load_warehouse_vehicles(warehouse_selected)
-		print(vehicles)
+		#print(vehicles)
 		
 
 

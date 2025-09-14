@@ -41,6 +41,7 @@ var atlas_heightfloor:int = atlas_height - 1
 
 var load_label: PackedScene = _load("res://scenes/label.tscn")
 var load_building: PackedScene = _load("res://scenes/building.tscn")
+var load_vehicle: PackedScene = _load("res://scenes/vehicle.tscn")
 
 var random = RandomNumberGenerator.new()
 var cooldown = false
@@ -92,6 +93,7 @@ func _ready() -> void:
 			
 			get_tree().call_group('Label','_make_label', Vector2i(x,y), $TileMapLayer.map_to_local(Vector2i(x,y)))
 			
+			Global.map_to_local[local] = [$TileMapLayer.map_to_local(local),_is_viable(local)]
 			if _is_viable(local):
 				viables.append(local)
 	var industries = int((width/100) * float(Global.industries_per_100))
@@ -162,6 +164,7 @@ func _ready() -> void:
 	$LoadingScreen.queue_free()
 
 func _process(delta: float) -> void:
+	$UI/FramesPS.text = str(round((1/delta)*10)/10)
 	if done_loading == true:
 		$UI.visible = true
 		var vp_size = get_viewport().get_visible_rect().size
@@ -234,7 +237,7 @@ func _process(delta: float) -> void:
 		if Input.is_action_just_pressed("LeftClick") and Global.mouse_in_menu == false:
 			plc_og_location = mouse_is_on_tile
 		if Input.is_action_just_released("LeftClick") and Global.mouse_in_menu == false:
-			print(Global.building_id_selected)
+			#print(Global.building_id_selected)
 			if Global.building_id_selected == 0:
 				var info_array = _drag_line_build(mouse_is_on_tile)
 				if info_array:
@@ -434,4 +437,10 @@ func _load(sprite):
 		Global.sprite.append(sprite)
 		Global.loaded_sprite.append(load_sprite)
 		return load_sprite
+
+func _vehicle(v_info):
+	#print("please")
+	var vehicle = load_vehicle.instantiate()
+	$Buildings.add_child(vehicle)
+	get_tree().call_group('Vehicle','_give_data',v_info)
 	

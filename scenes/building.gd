@@ -17,13 +17,13 @@ func _give_data(array_location,map_location,local,sprite_override):
 		#print(sprite_override,",",sprite_override == "null")
 		if sprite_override == "null":
 			if info[1] == 0:
-				get_tree().call_group("Building","_change_sprite",0)
+				get_tree().call_group("Building","_change_sprite",0,tilemap)
 			elif info[1] == 3:
 				$Sprite2D.texture = _load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
-				get_tree().call_group("Building","_change_sprite",3)
+				get_tree().call_group("Building","_change_sprite",3,tilemap)
 			elif info[1] == 4:
 				$Sprite2D.texture = _load(Global.building_source[my_b_id][1] + str(Global.orientation_selected) + Global.building_source[my_b_id][2])
-				get_tree().call_group("Building","_change_sprite",4)
+				get_tree().call_group("Building","_change_sprite",4,tilemap)
 			else:
 				#print(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
 				$Sprite2D.texture = _load(Global.building_source[my_b_id][1] + Global.building_source[my_b_id][2])
@@ -32,10 +32,12 @@ func _give_data(array_location,map_location,local,sprite_override):
 func _destroy(map_location):
 	if tilemap==map_location and Global.building_source[my_b_id][3] == true:
 		if not Global.road_changers.find(my_b_id) == -1:
-			get_tree().call_group("Building","_change_sprite",0)
+			get_tree().call_group("Building","_change_sprite",0,tilemap)
 		queue_free()
-func _change_sprite(b_id):
+func _change_sprite(b_id, pos) -> void:
 	#print(b_id, my_b_id)
+	if (pos - tilemap).length() > 1.5:
+		return
 	if not Global.road_changers.find(my_b_id) == -1 and (not Global.road_changers.find(b_id) == -1 or b_id == 4):
 		var check1 = _road_check(my_b_id,b_id,0,-1)
 		var check2 = _road_check(my_b_id,b_id,-1,0)

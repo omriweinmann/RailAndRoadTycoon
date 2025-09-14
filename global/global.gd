@@ -1,12 +1,14 @@
 extends Node
 
-var debug = false
+var debug = true
 
 var road_changers = [0,3]
 
-var width:int = 125
-var height:int = 125
+var width:int = 15#125
+var height:int = 15#125
 var altitude:float = 0
+
+var industries_per_100 = 0#5
 
 var sprite = []
 var loaded_sprite = []
@@ -22,11 +24,11 @@ var warehouses = {}
 var warehouses_n_i = 0
 var vehicles_n_i = 0
 
-var vehicle_shop = {
-	"Industrial Goods Truck": [10000, "Indstr"]
-}
+var map_to_local = {}
 
-var industries_per_100 = 5
+var vehicle_shop = {
+	"Industrial Goods Truck": [10000, "Indstr", "IndustrialGoodsTruck", ".png"]
+}
 
 var seed:int = -1
 
@@ -201,3 +203,7 @@ func _convert_currency(money):
 	else:
 		return str(money*money_conversions[conversion_selected][2]) + " " + money_conversions[conversion_selected][1]
 	return ""
+
+func _send_to_main(group,funct,stuff) -> void:
+	get_tree().call_group(group,funct,stuff)
+	
