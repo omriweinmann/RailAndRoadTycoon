@@ -93,7 +93,8 @@ func _ready() -> void:
 			
 			get_tree().call_group('Label','_make_label', Vector2i(x,y), $TileMapLayer.map_to_local(Vector2i(x,y)))
 			
-			Global.map_to_local[local] = [$TileMapLayer.map_to_local(local),_is_viable(local)]
+			var offset = max(0,$TileMapLayer.get_cell_atlas_coords(local)[1]-2)*2
+			Global.map_to_local[local] = [$TileMapLayer.map_to_local(local),_is_viable(local),offset]
 			if _is_viable(local):
 				viables.append(local)
 	var industries = int((width/100) * float(Global.industries_per_100))

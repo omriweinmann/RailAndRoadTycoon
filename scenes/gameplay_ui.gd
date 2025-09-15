@@ -12,6 +12,7 @@ var money_change = 0
 var seconds = 2.0
 
 func _ready() -> void:
+	Global._day_tick()
 	_load_automobile()
 	_load_route_options()
 	_load_route(route_selected)
@@ -199,7 +200,8 @@ func _on_buy_pressed() -> void:
 			warehouse[1].push_back([
 				selected_vehicle,
 				"Automobile #"+str(Global.vehicles_n_i)+" ("+Global.vehicle_shop[selected_vehicle][1]+")",
-				warehouse_selected
+				warehouse_selected,
+				0,
 			])
 			_load_warehouse_vehicles(warehouse_selected)
 			_on_vehicle_id_value_changed(warehouse[1].size())

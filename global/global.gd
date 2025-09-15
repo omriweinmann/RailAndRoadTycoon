@@ -27,7 +27,7 @@ var vehicles_n_i = 0
 var map_to_local = {}
 
 var vehicle_shop = {
-	"Industrial Goods Truck": [10000, "Indstr", "IndustrialGoodsTruck", ".png"]
+	"Industrial Goods Truck": [10000, "Indstr", "res://asset/pictures/vehicles/IndustrialGoodsTruck", ".png"]
 }
 
 var seed:int = -1
@@ -156,7 +156,7 @@ func _build(coords:Vector2i,_coords_local):
 				if building_id_selected == 4:
 					truck_stations.get_or_add(coords)
 					truck_stations_n_i += 1
-					truck_stations[coords] = [orientation_selected, "Truck Station #" + str(truck_stations_n_i)]
+					truck_stations[coords] = [orientation_selected, "Truck Station #" + str(truck_stations_n_i), false, {}]
 					#print(truck_stations)
 				elif building_id_selected == 3:
 					warehouses.get_or_add(coords)
@@ -207,3 +207,20 @@ func _convert_currency(money):
 func _send_to_main(group,funct,stuff) -> void:
 	get_tree().call_group(group,funct,stuff)
 	
+func _day_tick() -> void:
+	await get_tree().create_timer(0.2, true, true).timeout
+	for t in truck_stations:
+		var truck_station = truck_stations[t]
+		if truck_station[2]:
+			for x in 5:
+				print(x)
+				x = x - 3
+				for y in 5:
+					y = y -3
+					var xy = Vector2i(x,y)
+					var gbi = _get_building_info_of_v2i(xy)
+					if not gbi == []:
+						var resources:Dictionary = truck_station[3]
+						if gbi[1] == 2:
+							resources.get_or_add("Coal",0)
+							resources["Coal"] += 10

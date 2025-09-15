@@ -6,6 +6,8 @@ var my_warehouse = Vector2i(-1,-1)
 
 var my_v_source = ""
 
+var my_position
+
 func _load(sprite):
 	var find = Global.sprite.find(sprite)
 	if not find == -1:
@@ -25,10 +27,60 @@ func _give_data(v_info):
 		my_warehouse = get_warehouse
 		my_v_id = get_v_id
 		my_v_source = get_v_source
+		my_position = get_warehouse
 		position = Global.map_to_local[get_warehouse][0]
 		$Sprite2D.texture = _load("res://asset/pictures/vehicles/IndustrialGoodsTruck0001.png")
-		_scary_pathfinding(get_warehouse,Vector2i(0,0))
+		_move(Vector2i(0,0))
 		
+func _move(end_goal) -> void:
+	var path:Array = _scary_pathfinding(my_position,end_goal)
+	#print(path)
+	if path == []:
+		Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " cannot find a valid path."}
+		return #failed
+	var before_offset = Vector2(-1,-1)
+	var before_x = Vector2i(-1,-1)
+	for x in path:
+		var add = "0000"
+		var offset = Vector2(-16,-10)
+		print(x - my_position)
+		if x - my_position == Vector2i(-1,0):
+			add = "0100"
+			offset = Vector2(-8,-5)
+		if x - my_position == Vector2i(0,-1):
+			add = "1000"
+			offset = Vector2(8,-5)
+		if x - my_position == Vector2i(1,0):
+			add = "0010"
+			offset = Vector2(8,5)
+		if x - my_position == Vector2i(0,1):
+			add = "0001"
+			offset = Vector2(-8,5)
+		if not before_offset == Vector2(-1,-1) and not before_x == Vector2i(-1,-1):
+			if not before_offset == offset:
+				var tween2 = create_tween()
+				#print(Global.map_to_local[x])
+				tween2.tween_property($".", "position", Global.map_to_local[before_x][0]+offset, 1.0)
+				await get_tree().create_timer(0.5, true, true).timeout
+				$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+				await tween2.finished 
+		#print(_get_source()[2] + add + _get_source()[3])
+		$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+		var tween = create_tween()
+		#print(Global.map_to_local[x])
+		tween.tween_property($".", "position", Global.map_to_local[x][0]+offset, 1.0)
+		#print(tween.is_running())
+		tween.play()
+		#print(tween.is_running())
+		await tween.finished
+		my_position = x
+		#print("done")
+		before_offset = offset
+		before_x = x
+		
+func _get_source():
+	return Global.vehicle_shop[my_v_source]
+
 func _get_warehouse_vehicle():
 	for ve in Global.warehouses[my_warehouse][1]:
 		if ve[0] == my_v_source:
@@ -105,4 +157,4 @@ func _scary_pathfinding(start_miot:Vector2i, end_miot:Vector2i):
 	#print(current)
 	
 func _process(_delta: float) -> void:
-	pass
+	$Sprite2D.position = Vector2(0,-Global.map_to_local[my_position][2])
