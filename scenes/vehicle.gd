@@ -32,38 +32,48 @@ func _give_data(v_info):
 		$Sprite2D.texture = _load("res://asset/pictures/vehicles/IndustrialGoodsTruck0001.png")
 		_move(Vector2i(0,0))
 		
+var before_offset = Vector2(-1,-1)
+var before_x = Vector2i(-1,-1)
+var before_minus = Vector2i(-2,-2)
+
 func _move(end_goal) -> void:
 	var path:Array = _scary_pathfinding(my_position,end_goal)
 	#print(path)
 	if path == []:
 		Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " cannot find a valid path."}
 		return #failed
-	var before_offset = Vector2(-1,-1)
-	var before_x = Vector2i(-1,-1)
 	for x in path:
 		var add = "0000"
 		var offset = Vector2(-16,-10)
 		print(x - my_position)
-		if x - my_position == Vector2i(-1,0):
+		var x_minus = x - my_position
+		if x_minus == Vector2i(-1,0):
 			add = "0100"
 			offset = Vector2(-8,-5)
-		if x - my_position == Vector2i(0,-1):
+		if x_minus == Vector2i(0,-1):
 			add = "1000"
 			offset = Vector2(8,-5)
-		if x - my_position == Vector2i(1,0):
+		if x_minus == Vector2i(1,0):
 			add = "0010"
 			offset = Vector2(8,5)
-		if x - my_position == Vector2i(0,1):
+		if x_minus == Vector2i(0,1):
 			add = "0001"
 			offset = Vector2(-8,5)
 		if not before_offset == Vector2(-1,-1) and not before_x == Vector2i(-1,-1):
 			if not before_offset == offset:
-				var tween2 = create_tween()
-				#print(Global.map_to_local[x])
-				tween2.tween_property($".", "position", Global.map_to_local[before_x][0]+offset, 1.0)
-				await get_tree().create_timer(0.5, true, true).timeout
-				$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
-				await tween2.finished 
+				if (before_minus - x_minus) == Vector2i(-1,-1) or (before_minus - x_minus) == Vector2i(1,1):
+					var tween2 = create_tween()
+					#print(Global.map_to_local[x])
+					tween2.tween_property($".", "position", Global.map_to_local[before_x][0]+offset, 0)
+					$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+					await tween2.finished 
+				else:
+					var tween2 = create_tween()
+					#print(Global.map_to_local[x])
+					tween2.tween_property($".", "position", Global.map_to_local[before_x][0]+offset, 0.5)
+					await get_tree().create_timer(0.25, true, true).timeout
+					$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+					await tween2.finished 
 		#print(_get_source()[2] + add + _get_source()[3])
 		$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
 		var tween = create_tween()
@@ -77,6 +87,7 @@ func _move(end_goal) -> void:
 		#print("done")
 		before_offset = offset
 		before_x = x
+		before_minus = x_minus
 		
 func _get_source():
 	return Global.vehicle_shop[my_v_source]
