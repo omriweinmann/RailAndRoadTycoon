@@ -8,6 +8,8 @@ var my_v_source = ""
 
 var my_position
 
+
+
 func _load(sprite):
 	var find = Global.sprite.find(sprite)
 	if not find == -1:
@@ -17,6 +19,7 @@ func _load(sprite):
 		Global.sprite.append(sprite)
 		Global.loaded_sprite.append(load_sprite)
 		return load_sprite
+
 
 func _give_data(v_info):
 	#print(v_info)
@@ -30,13 +33,25 @@ func _give_data(v_info):
 		my_position = get_warehouse
 		position = Global.map_to_local[get_warehouse][0]
 		$Sprite2D.texture = _load("res://asset/pictures/vehicles/IndustrialGoodsTruck0001.png")
-		_move(Vector2i(0,0))
+		while true:
+			await get_tree().create_timer(0.125, true, true).timeout
+			var whouse = Global.warehouses[my_warehouse]
+			var route_station = 0
+			if not Global.routes.get(whouse[2],[]) == []:
+				var route = Global.routes[whouse[2]]
+				print(route)
+				var x = -1
+				for xx in route:
+					x += 1
+					print(xx)
+					await move(xx[0])
+					Global.truck_stations[xx[0]][2] = true
 		
 var before_offset = Vector2(-1,-1)
 var before_x = Vector2i(-1,-1)
 var before_minus = Vector2i(-2,-2)
 
-func _move(end_goal) -> void:
+func move(end_goal):
 	var path:Array = _scary_pathfinding(my_position,end_goal)
 	#print(path)
 	if path == []:
@@ -77,6 +92,8 @@ func _move(end_goal) -> void:
 		before_offset = offset
 		before_x = x
 		before_minus = x_minus
+	print("b")
+	return
 		
 func _get_source():
 	return Global.vehicle_shop[my_v_source]
