@@ -11,6 +11,7 @@ var my_position
 
 
 func _load(sprite):
+	$Sprite2D.visible = true
 	var find = Global.sprite.find(sprite)
 	if not find == -1:
 		return Global.loaded_sprite[find]
@@ -32,32 +33,58 @@ func _give_data(v_info):
 		my_v_source = get_v_source
 		my_position = get_warehouse
 		position = Global.map_to_local[get_warehouse][0]
-		$Sprite2D.texture = _load("res://asset/pictures/vehicles/IndustrialGoodsTruck0001.png")
+		$Sprite2D.visible = false
 		while true:
+			if not _check_if_alive():
+				queue_free()
 			await get_tree().create_timer(0.125, true, true).timeout
 			var whouse = Global.warehouses[my_warehouse]
 			var route_station = 0
-			if not Global.routes.get(whouse[2],[]) == []:
-				var route = Global.routes[whouse[2]]
-				print(route)
-				var x = -1
-				for xx in route:
-					x += 1
-					print(xx)
-					await move(xx[0])
-					Global.truck_stations[xx[0]][2] = true
+			if not whouse[2] == -1:
+				if whouse[2] == 0:
+					if not my_position == my_warehouse:
+						await move(my_warehouse, whouse[2])
+				elif not Global.routes.get(whouse[2],[]) == []:
+					var route = Global.routes[whouse[2]]
+					#print(route)
+					var x = -1
+					for xx in route:
+						x += 1
+						#print(xx)
+						await move(xx[0], whouse[2])
+						#print(Global.warehouses[my_warehouse][2],", ",whouse[2])
+						if not Global.warehouses[my_warehouse][2] == whouse[2]:
+							break
+						Global.truck_stations[xx[0]][2] = true
 		
 var before_offset = Vector2(-1,-1)
 var before_x = Vector2i(-1,-1)
 var before_minus = Vector2i(-2,-2)
 
-func move(end_goal):
+func move(end_goal, whouse):
 	var path:Array = _scary_pathfinding(my_position,end_goal)
 	#print(path)
 	if path == []:
-		Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " cannot find a valid path."}
+		Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " cannot find a valid path." + "\n\n It's warehouse's route has been automatically set to -1 (full stop)."}
 		return #failed
 	for x in path:
+		if not _check_if_alive():
+			queue_free()
+		#print(Global.warehouses[my_warehouse][2],", ",whouse)
+		for y in path:
+			if Global._get_building_info_of_v2i(y) == [] or Global.is_a_road_for_all_intents_and_purposes.find(Global._get_building_info_of_v2i(y)[1]) == -1:
+				Global.warehouses[my_warehouse][2] = -1
+				if Global._get_building_info_of_v2i(my_position) == [] or Global.is_a_road_for_all_intents_and_purposes.find(Global._get_building_info_of_v2i(my_position)[1]) == -1:
+					Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " veered offroad.\n\n It has been towed back to it's warehouse at an expense of: " + Global._convert_currency(5000) + "\n\n It's warehouse's route has been automatically set to -1 (full stop)."}
+					$Sprite2D.visible = false
+					my_position = my_warehouse
+					position = Global.map_to_local[my_warehouse][0]
+					Global.money_base -= 5000
+					return
+				Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + "'s path became invalid.\n\n It's warehouse's route has been automatically set to -1 (full stop)."}
+				return
+		if not Global.warehouses[my_warehouse][2] == whouse:
+			return
 		var add = "0000"
 		var offset = Vector2(-16,-10)
 		#print(x - my_position)
@@ -77,9 +104,11 @@ func move(end_goal):
 		offset = Vector2(0,0)
 		if not before_minus == x_minus:
 			await get_tree().create_timer(0.125, true, true).timeout
-			$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+			if not add == "0000":
+				$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
 		#print(_get_source()[2] + add + _get_source()[3])
-		$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
+		if not add == "0000":
+			$Sprite2D.texture = _load(_get_source()[2] + add + _get_source()[3])
 		var tween = create_tween()
 		#print(Global.map_to_local[x])
 		tween.tween_property($".", "position", Global.map_to_local[x][0]+offset, 1.0)
@@ -206,3 +235,9 @@ func _get_direction_string(v2i:Vector2i):
 		var direction = array[2]
 		return str(direction)
 	return ""
+
+func _check_if_alive():
+	for x in Global.warehouses[my_warehouse][1]:
+		if x[1] == my_v_id:
+			return true
+	return false

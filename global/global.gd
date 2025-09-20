@@ -3,6 +3,7 @@ extends Node
 var debug = true
 
 var road_changers = [0,3]
+var is_a_road_for_all_intents_and_purposes = [0,3,4]
 
 var width:int = 15#125
 var height:int = 15#125
@@ -64,7 +65,11 @@ var building_source = [
 		[], # Procedu-Generated (Check Power Plant for true)
 		0, # ZIndex
 		0, # Max Orientation
-		100,
+		100, #Cost
+		[ # Production Line Info
+			{}, #Takes (Check Power Plant)
+			{} #Produces (Check Coal Mine)
+		]
 	],
 	[
 		"Power Plant",
@@ -72,7 +77,7 @@ var building_source = [
 		".png",
 		false,
 		[ # True P-G
-			50, # Social Distancing - New industries can not be place with in _ of this industry
+			50, # Social Distancing - New industries can not be placed within _ of this industry
 			[8,2], # Extra (places more industies of the same type around) (How many, How far)
 			[
 				"res://asset/pictures/buildings/PowerPlant0.png",
@@ -87,6 +92,10 @@ var building_source = [
 		1,
 		0,
 		0,
+		[
+			{"Coal": [10, 100]}, #"Goods_Name": [How much needed, to make _ product]
+			{}
+		]
 	],
 	[
 		"Coal Mine",
@@ -106,6 +115,10 @@ var building_source = [
 		1,
 		0,
 		0,
+		[
+			{},
+			{"Coal": [3]} #"Goods_Name": [How much made per day tick], if the building has imports, waits for them before making exports
+		]
 	],
 	[
 		"Warehouse", # Real Name

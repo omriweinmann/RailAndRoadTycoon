@@ -1,6 +1,6 @@
 extends Control
 
-var route_selected:int = 0
+var route_selected:int = 1
 var load_type_selected:int = 0
 var warehouse_selected := Vector2i(-1,-1)
 
@@ -122,8 +122,9 @@ func _on_truck_station_id_pressed(id: int) -> void:
 func _add_to_route(miot):
 	var find = Global.truck_stations.get(miot,[])
 	if not find == []:
-		var array = Global.routes.get_or_add(route_selected)
-		array.append([miot,load_type_selected])
+		var array = Global.routes.get_or_add(route_selected, [])
+		print(array,", ", route_selected)
+		array.push_back([miot,load_type_selected])
 		_load_route(route_selected)
 	else:
 		Global.error_pop_up = {"Title": "Invalid Action.", "Description": "Only stations can be added to routes."}
