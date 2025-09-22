@@ -30,10 +30,9 @@ func _load_automobile() -> void:
 	
 func _load_route_options() -> void:
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("No action")
-	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Wait for load")
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Load available")
+	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Wait for load")
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Unload")
-	$Routing/Top/MarginContainer2/HBoxContainer/Options.add_item("Load and Unload")
 	$Routing/Top/MarginContainer2/HBoxContainer/Options.select(0)
 	
 func _on_mouse_entered() -> void:
@@ -52,6 +51,18 @@ func _process(delta: float) -> void:
 	if Global.building_id_selected == -4:
 		$Top/Route.button_pressed = true
 		$Routing.visible = true
+		if Input.is_action_just_released("1"):
+			$Routing/Top/MarginContainer2/HBoxContainer/Options.select(0)
+			_on_route_options_item_selected(0)
+		if Input.is_action_just_released("2"):
+			$Routing/Top/MarginContainer2/HBoxContainer/Options.select(1)
+			_on_route_options_item_selected(1)
+		if Input.is_action_just_released("3"):
+			$Routing/Top/MarginContainer2/HBoxContainer/Options.select(2)
+			_on_route_options_item_selected(2)
+		if Input.is_action_just_released("4"):
+			$Routing/Top/MarginContainer2/HBoxContainer/Options.select(3)
+			_on_route_options_item_selected(3)
 	else:
 		$Top/Route.button_pressed = false
 		$Routing.visible = false

@@ -1,15 +1,15 @@
 extends Node
 
-var debug = true
+var debug = false
 
 var road_changers = [0,3]
 var is_a_road_for_all_intents_and_purposes = [0,3,4]
 
-var width:int = 15#125
-var height:int = 15#125
+var width:int = 125
+var height:int = 125
 var altitude:float = 0
 
-var industries_per_100 = 0#5
+var industries_per_100 = 5
 
 var sprite = []
 var loaded_sprite = []
@@ -28,7 +28,15 @@ var vehicles_n_i = 0
 var map_to_local = {}
 
 var vehicle_shop = {
-	"Industrial Goods Truck": [10000, "Indstr", "res://asset/pictures/vehicles/IndustrialGoodsTruck", ".png"]
+	"Industrial Goods Truck": [
+		10000,
+		"Indstr",
+		"res://asset/pictures/vehicles/IndustrialGoodsTruck",
+		".png",
+		{
+			"Coal": 60
+		}
+	]
 }
 
 var seed:int = -1
@@ -55,6 +63,14 @@ var money_conversions = [
 	["Bolivar (2021)","VES (2021)",5711960,true],
 	#["WeinBucks","WnB",1,true]
 ]
+
+var goods_types = {
+	"Coal": [
+		"tonnes",
+		"of coal",
+		[1,25,100,50] #[costmultiplier,dayoffset,valuerate,constant]
+	]
+}
 
 var building_source = [
 	[
@@ -117,7 +133,7 @@ var building_source = [
 		0,
 		[
 			{},
-			{"Coal": [3]} #"Goods_Name": [How much made per day tick], if the building has imports, waits for them before making exports
+			{"Coal": [1]} #"Goods_Name": [How much made per day tick], if the building has imports, waits for them before making exports
 		]
 	],
 	[
@@ -129,6 +145,10 @@ var building_source = [
 		1, # ZIndex
 		0,
 		1000,
+		[
+			{},
+			{}
+		]
 	],
 	[
 		"Truck Station",
@@ -139,6 +159,10 @@ var building_source = [
 		1, 
 		1,
 		2000,
+		[
+			{},
+			{}
+		]
 	],
 ]
 
@@ -169,7 +193,7 @@ func _build(coords:Vector2i,_coords_local):
 				if building_id_selected == 4:
 					truck_stations.get_or_add(coords)
 					truck_stations_n_i += 1
-					truck_stations[coords] = [orientation_selected, "Truck Station #" + str(truck_stations_n_i), false, {}]
+					truck_stations[coords] = [orientation_selected, "Truck Station #" + str(truck_stations_n_i), false, {}, Vector2i(-1,-1),0]
 					#print(truck_stations)
 				elif building_id_selected == 3:
 					warehouses.get_or_add(coords)
@@ -193,7 +217,7 @@ func _remove(array_location):
 			#print(truck_stations)
 		if built_data[array_location][1] == 3:
 			warehouses[built[array_location]] = []
-			print(warehouses)
+			#print(warehouses)
 			get_tree().call_group("GameplayUI","_external_load_selected_wrh")
 			#print(truck_stations)
 		built.remove_at(array_location)
@@ -220,20 +244,59 @@ func _convert_currency(money):
 func _send_to_main(group,funct,stuff) -> void:
 	get_tree().call_group(group,funct,stuff)
 	
+var days = 0
 func _day_tick() -> void:
-	await get_tree().create_timer(0.2, true, true).timeout
-	for t in truck_stations:
-		var truck_station = truck_stations[t]
-		if truck_station[2]:
-			for x in 5:
-				print(x)
-				x = x - 3
-				for y in 5:
-					y = y -3
-					var xy = Vector2i(x,y)
-					var gbi = _get_building_info_of_v2i(xy)
-					if not gbi == []:
-						var resources:Dictionary = truck_station[3]
-						if gbi[1] == 2:
-							resources.get_or_add("Coal",0)
-							resources["Coal"] += 10
+	while true:
+		await get_tree().create_timer(1, true, true).timeout
+		days += 1
+		for t in truck_stations:
+			var truck_station = truck_stations[t]
+			#print(truck_station[2])
+			if truck_station[2]:
+				for x in 5:
+					print(x)
+					#print("b")
+					x = x - 2
+					#print(x)
+					for y in 5:
+						y = y -2
+						var xy = t + Vector2i(x,y)
+						var gbi = _get_building_info_of_v2i(xy)
+						#print(xy)
+						#print(gbi)
+						if not gbi == []:
+							var resources:Dictionary = truck_station[3]
+							var get_source = Global.building_source[gbi[1]]
+							var get_stuff = get_source[8]
+							#print(resources)
+							if not get_stuff == [{},{}]:
+								if get_stuff[0] == {} and not get_stuff[1] == {}:
+									for s in get_stuff[1]:
+										var stuff = get_stuff[1][s]
+										var source = s
+										resources.get_or_add(s,0)
+										resources[s] += stuff[0]
+										#print(resources)
+								if not get_stuff[0] == {}:
+									#print(resources)
+									for s in get_stuff[0]:
+										#print("s")
+										var resources_get = resources.get(s,-1)
+										if not resources_get == -1:
+											resources.erase(s)
+											var tt = float((t - truck_station[4]).length())
+											var xx = float(abs(days - truck_station[5]))
+											
+											var get_goods_info = goods_types[s][2]
+											
+											var i = float(get_goods_info[0])
+											var r = float(get_goods_info[1])
+											var f = float(get_goods_info[2])
+											var c = float(get_goods_info[3])
+											
+											var calculate = float(resources_get) * ((tt*i)*(f/(xx+r))+c)
+											
+											#print(calculate)
+											
+											money_base += int(calculate)
+											

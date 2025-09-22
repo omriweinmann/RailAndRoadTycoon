@@ -8,7 +8,12 @@ var my_v_source = ""
 
 var my_position
 
+var text = ""
 
+var stock = {}
+
+var last_tile = Vector2i(-1,-1)
+var least_day = 0
 
 func _load(sprite):
 	$Sprite2D.visible = true
@@ -35,6 +40,7 @@ func _give_data(v_info):
 		position = Global.map_to_local[get_warehouse][0]
 		$Sprite2D.visible = false
 		while true:
+			text = ""
 			if not _check_if_alive():
 				queue_free()
 			await get_tree().create_timer(0.125, true, true).timeout
@@ -50,12 +56,88 @@ func _give_data(v_info):
 					var x = -1
 					for xx in route:
 						x += 1
+						text = ""
 						#print(xx)
-						await move(xx[0], whouse[2])
+						var move = await move(xx[0], whouse[2])
 						#print(Global.warehouses[my_warehouse][2],", ",whouse[2])
-						if not Global.warehouses[my_warehouse][2] == whouse[2]:
+						if not _check_if_alive():
+							queue_free()
+						if not Global.warehouses[my_warehouse][2] == whouse[2] or move == "break":
 							break
-						Global.truck_stations[xx[0]][2] = true
+						#print(Global.truck_stations[xx[0]])
+						var truck_station = Global.truck_stations[xx[0]]
+						truck_station[2] = true
+						var action = xx[1]
+						var good_to_go = false
+						if action == 1 or action == 2:
+							
+							while good_to_go == false:
+								var filled = 0
+								for st in stock:
+									filled += stock[st]
+								await get_tree().create_timer(0.125, true, true).timeout
+								var source = _get_source()
+								var carry_able_goods:Dictionary = source[4]
+								var list_of_goods = []
+								var lowest = 99999999
+								for goods_type in truck_station[3]:
+									var get_cag = carry_able_goods.get(goods_type, -1)
+									#print(get_cag)
+									if not get_cag == -1:
+										list_of_goods.append(goods_type)
+										if get_cag < lowest:
+											lowest = get_cag
+								#print(lowest,", ",list_of_goods)
+								#print(truck_station[3])
+								#print(stock,": ",filled)
+								if not list_of_goods == []:
+									var pre_text = "Loading " + str(list_of_goods) + ": "
+									text = pre_text + str(int((float(filled)/float(lowest))*100)) + "%"
+									#print(text)
+									filled = 0
+									for st in stock:
+										filled += stock[st]
+									while filled < lowest and not list_of_goods == []:
+										for goods_type in list_of_goods:
+											await get_tree().create_timer(0.125, true, true).timeout
+											var g_amount = truck_station[3][goods_type]
+											if g_amount >= 10:
+												truck_station[3][goods_type] -= 10
+												filled += 10
+												stock.get_or_add(goods_type, 0)
+												stock[goods_type] += 10
+											else:
+												list_of_goods.erase(goods_type)
+										text = pre_text + str(int((float(filled)/float(lowest))*100)) + "%"
+										#print(text)
+								if truck_station[5] == 0:
+									last_tile = my_position
+									least_day = Global.days
+								else:
+									last_tile = truck_station[4]
+									least_day = truck_station[5]
+								if not filled < lowest or action == 1:
+									good_to_go = true
+						elif action == 3:
+							var max = 0
+							for st in stock:
+								max += stock[st]
+							var filled = max
+							for goods_type in stock:
+								while stock[goods_type] > 0:
+									await get_tree().create_timer(0.125, true, true).timeout
+									filled -= 10
+									stock[goods_type] -= 10
+									truck_station[3].get_or_add(goods_type, 0)
+									truck_station[3][goods_type] += 10
+									text = "Unloading: " + str(int((float(filled)/float(max))*100)) + "%"
+							if last_tile == Vector2i(-1,-1):
+								truck_station[4] = last_tile
+							if least_day == 0:
+								truck_station[5] = least_day
+							last_tile = Vector2i(-1,-1)
+							least_day = 0
+						#print(stock)	
 		
 var before_offset = Vector2(-1,-1)
 var before_x = Vector2i(-1,-1)
@@ -66,7 +148,7 @@ func move(end_goal, whouse):
 	#print(path)
 	if path == []:
 		Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + " cannot find a valid path." + "\n\n It's warehouse's route has been automatically set to -1 (full stop)."}
-		return #failed
+		return "break" #failed
 	for x in path:
 		if not _check_if_alive():
 			queue_free()
@@ -80,11 +162,11 @@ func move(end_goal, whouse):
 					my_position = my_warehouse
 					position = Global.map_to_local[my_warehouse][0]
 					Global.money_base -= 5000
-					return
+					return "break"
 				Global.error_pop_up = {"Title": "Invalid Path.", "Description": my_v_id + "'s path became invalid.\n\n It's warehouse's route has been automatically set to -1 (full stop)."}
-				return
+				return "break"
 		if not Global.warehouses[my_warehouse][2] == whouse:
-			return
+			return "break"
 		var add = "0000"
 		var offset = Vector2(-16,-10)
 		#print(x - my_position)
@@ -121,8 +203,8 @@ func move(end_goal, whouse):
 		before_offset = offset
 		before_x = x
 		before_minus = x_minus
-	print("b")
-	return
+	#print("b")
+	return "good"
 		
 func _get_source():
 	return Global.vehicle_shop[my_v_source]
@@ -217,6 +299,11 @@ func _scary_pathfinding(start_miot:Vector2i, end_miot:Vector2i):
 	
 func _process(_delta: float) -> void:
 	$Sprite2D.position = Vector2(0,-Global.map_to_local[my_position][2])
+	if text == "":
+		$CanvasGroup/Control/Label.visible = false
+	else:
+		$CanvasGroup/Control/Label.visible = true
+		$CanvasGroup/Control/Label.text = text
 
 
 func _get_2nr_neighbors(v2i:Vector2i):

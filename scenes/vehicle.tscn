@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://busk6mhj3g0qj"]
+[gd_scene load_steps=3 format=3 uid="uid://busk6mhj3g0qj"]
 
 [ext_resource type="Script" uid="uid://vaar0ptitvf" path="res://scenes/vehicle.gd" id="1_pu4i8"]
+[ext_resource type="Theme" uid="uid://yraq1tvsgd0m" path="res://asset/theme/base_theme.tres" id="2_d0fkt"]
 
 [node name="Vehicle" type="Area2D" groups=["Vehicle"]]
 z_index = 1
@@ -11,3 +12,29 @@ visible = false
 
 [node name="CollisionPolygon2D" type="CollisionPolygon2D" parent="."]
 polygon = PackedVector2Array(0, -20, -32, 0, 0, 20, 32, 0)
+
+[node name="CanvasGroup" type="CanvasGroup" parent="."]
+
+[node name="Control" type="Control" parent="CanvasGroup"]
+layout_mode = 3
+anchors_preset = 0
+offset_left = -32.0
+offset_top = -20.0
+offset_right = 32.0
+offset_bottom = 20.0
+pivot_offset = Vector2(32, 20)
+theme = ExtResource("2_d0fkt")
+
+[node name="Label" type="Label" parent="CanvasGroup/Control"]
+z_index = 50
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 11
+text = "Loading Coal: 99%"
+horizontal_alignment = 1
+autowrap_mode = 2
