@@ -1,6 +1,23 @@
 # RailAndRoadTycoon
 
-Omri Weinmann's Rail and Road Tycoon
+"Money makes the world go round."
+
+Alpha build for Omri Weinmann's Railroad Tycoon
+
+LMB: Place/Select (select is used for routing and warehouses)
+MMB: Move/Zoom
+
+RMB: Stop placing/Close menu
+ESC: Regenerate world
+
+Change your currency by clicking on the money label.
+
+Originally made for Summer of Making 2025 - Hack Club
+
+Additionally submitted for Code Quest - Hack Club
+
+
+
 
 Hey guys, its me, studios, so uhm. heres the (hastily made and uninformative) GUIDE for making a successful coal route:
 
